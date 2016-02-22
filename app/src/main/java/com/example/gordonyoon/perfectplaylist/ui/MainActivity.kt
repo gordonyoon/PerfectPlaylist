@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist
+package com.example.gordonyoon.perfectplaylist.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import com.example.gordonyoon.perfectplaylist.R
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 
 class MainActivity : AppCompatActivity() {
