@@ -61,5 +61,10 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.0.2'
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
+    compile "io.realm:realm-android-library:0.87.4"
+    compile "io.realm:realm-annotations:0.87.4"
+    kapt "io.realm:realm-annotations:0.87.4"
+    kapt "io.realm:realm-annotations-processor:0.87.4"
+
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
