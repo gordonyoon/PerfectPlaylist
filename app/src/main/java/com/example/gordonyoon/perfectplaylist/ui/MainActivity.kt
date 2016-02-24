@@ -2,29 +2,30 @@ package com.example.gordonyoon.perfectplaylist.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.example.gordonyoon.perfectplaylist.R
+import com.example.gordonyoon.perfectplaylist.controllers.printPlaylists
+import com.example.gordonyoon.perfectplaylist.extensions.snackbar
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
+import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity"
+    companion object {
+        val TAG = Authenticator::class.java.name
+    }
 
     val authenticator: Authenticator by lazy { Authenticator(this@MainActivity) }
+    val api: SpotifyApi = SpotifyApi()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show()
-        }
+        fab.setOnClickListener { view -> view.snackbar("Replace with your own action") }
 
         authenticator.login()
     }
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, intent)
         Log.d(TAG, "Successfully returned from logging in")
 
-        authenticator.onLoginResult(requestCode, resultCode, intent)
+        // TODO: refresh access token when it expires
+        val accessToken: String? = authenticator.getAccessToken(requestCode, resultCode, intent)
+        api.setAccessToken(accessToken!!)
+        printPlaylists()
     }
 }

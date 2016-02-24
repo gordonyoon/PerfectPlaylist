@@ -56,14 +56,9 @@ dependencies {
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
     compile 'com.github.kaaes:spotify-web-api-android:0.2.0'
 
-    compile 'com.google.dagger:dagger:2.0.2'
-    kapt 'com.google.dagger:dagger-compiler:2.0.2'
-    provided 'org.glassfish:javax.annotation:10.0-b28'
-
-    compile "io.realm:realm-android-library:0.87.4"
-    compile "io.realm:realm-annotations:0.87.4"
-    kapt "io.realm:realm-annotations:0.87.4"
-    kapt "io.realm:realm-annotations-processor:0.87.4"
+    compile 'com.jakewharton:butterknife:7.0.1'
+    kapt 'com.jakewharton:butterknife:7.0.1'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.jetbrains.anko:anko-sdk15:0.8.2'
 }
