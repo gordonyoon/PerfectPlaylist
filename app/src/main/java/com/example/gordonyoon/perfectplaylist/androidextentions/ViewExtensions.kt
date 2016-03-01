@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.extensions
+package com.example.gordonyoon.perfectplaylist.androidextentions
 
 import android.support.design.widget.Snackbar
 import android.view.View
