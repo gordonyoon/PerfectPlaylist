@@ -10,12 +10,9 @@ import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.printFollowingPlaylistsSongs
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        val TAG = Authenticator::class.java.name
-    }
 
     val authenticator: Authenticator by lazy { Authenticator(this@MainActivity) }
     val api: SpotifyApi = SpotifyApi()
@@ -32,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
-        Log.d(TAG, "Successfully returned from logging in")
+        Timber.d("Successfully returned from logging in")
 
         // TODO: refresh access token when it expires
         val accessToken: String? = authenticator.getAccessToken(requestCode, resultCode, intent)

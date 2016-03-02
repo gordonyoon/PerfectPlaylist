@@ -8,12 +8,9 @@ import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.ERROR
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.TOKEN
+import timber.log.Timber
 
 class Authenticator(val context: Activity) {
-
-    companion object {
-        val TAG = Authenticator::class.java.name
-    }
 
     private val CLIENT_ID: String by lazy { context.resources.getString(R.string.client_id) }
     private val REDIRECT_URI: String by lazy { context.resources.getString(R.string.redirect_uri) }
@@ -36,11 +33,12 @@ class Authenticator(val context: Activity) {
             val response = AuthenticationClient.getResponse(resultCode, intent)
             when (response.type) {
                 TOKEN -> {
-                    Log.d(TAG, "access token: ${response.accessToken}")
+                    Timber.d("access token: ${response.accessToken}")
+
                     return response.accessToken
                 }
                 ERROR -> {
-                    Log.d(TAG, "error response: ${response.error}")
+                    Timber.d("error response: ${response.error}")
                 }
             }
         }

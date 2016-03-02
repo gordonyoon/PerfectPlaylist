@@ -4,6 +4,7 @@ import android.util.Log
 import kaaes.spotify.webapi.android.SpotifyService
 import org.jetbrains.anko.async
 import org.jetbrains.anko.uiThread
+import timber.log.Timber
 import java.util.*
 
 fun SpotifyService.printMyPlaylists() {
@@ -37,7 +38,7 @@ fun SpotifyService.printFollowingPlaylistsSongs() {
             } while (pager.next != null)
         }
         uiThread {
-            Log.d("SpotifyService", "Total count: ${songs.size}")
+            Timber.d("SpotifyService", "Total count: ${songs.size}")
         }
     }
 }
