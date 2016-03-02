@@ -7,8 +7,7 @@ import android.util.Log
 import com.example.gordonyoon.perfectplaylist.R
 import com.example.gordonyoon.perfectplaylist.androidextentions.snackbar
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
-import com.example.gordonyoon.perfectplaylist.spotify.printFollowingPlaylists
-import com.example.gordonyoon.perfectplaylist.spotify.printMyPlaylists
+import com.example.gordonyoon.perfectplaylist.spotify.printFollowingPlaylistsSongs
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -38,6 +37,6 @@ class MainActivity : AppCompatActivity() {
         // TODO: refresh access token when it expires
         val accessToken: String? = authenticator.getAccessToken(requestCode, resultCode, intent)
         api.setAccessToken(accessToken!!)
-        api.service.printFollowingPlaylists()
+        api.service.printFollowingPlaylistsSongs()
     }
 }
