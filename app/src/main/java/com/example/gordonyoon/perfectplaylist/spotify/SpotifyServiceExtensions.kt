@@ -51,12 +51,13 @@ fun SpotifyService.updatePPTemp(): Unit {
                 ?: throw NotImplementedError("Perfect Playlist - Temp does not exist yet.")
         val latestAddDate: Date = getPlaylistTracks(myId, ppTempId).items.map { it.added_at.toDate() }.max()
                 ?: throw NotImplementedError("The playlist is empty.")
-//        val tracks = getNewTrackIds(myId, ppTempId, latestAddDate)
+        val latestAddDateSample: Date = "2016-03-04T00:00:00Z".toDate()
+        val tracks = getNewTrackUris(myId, latestAddDateSample)
 //        addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to tracks))
     }
 }
 
-fun SpotifyService.getNewTrackNames(myId: String, latestAdd: Date): List<String> {
+fun SpotifyService.getNewTrackUris(myId: String, latestAdd: Date): List<String> {
     throwIfOnMainThread()
     val followingPlaylists = getPlaylists(myId).items.filter { it.owner.id != myId }
     val trackIds: ArrayList<String> = ArrayList()
@@ -64,11 +65,27 @@ fun SpotifyService.getNewTrackNames(myId: String, latestAdd: Date): List<String>
         var offset = 0
         do {
             val pager = getPlaylistTracks(playlist.owner.id, playlist.id, mapOf("offset" to offset))
-            trackIds.addAll(pager.items.filter { it.added_at.toDate().after(latestAdd) }.map { it.track.name })
+            trackIds.addAll(pager.items.filter { it.added_at.toDate().after(latestAdd) }.map { it.track.uri })
             offset += pager.limit
         } while (pager.next != null)
     }
     return trackIds
+}
+
+fun SpotifyService.addTracksToPlaylist(myId: String, ppTempId: String, trackIds: List<String>): Unit {
+    throwIfOnMainThread()
+    if (trackIds.isEmpty()) return
+    val ITEM_LIMIT: Int = 100
+    var start: Int = 0
+    do {
+        val end = if (start + ITEM_LIMIT - 1 < trackIds.size) start + ITEM_LIMIT - 1 else trackIds.size - 1
+        Timber.d("Start: $start")
+        Timber.d("End: $end")
+        Timber.d("Number in sliced list: ${trackIds.slice(start..end).size}")
+        Timber.d("Sliced list: ${trackIds.slice(start..end)}")
+        addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to trackIds.slice(start..end)))
+        start += 100
+    } while (end < trackIds.size - 1)
 }
 
 private fun SpotifyService.throwIfOnMainThread() {
