@@ -18,7 +18,10 @@ class Authenticator(val context: Activity) {
 
     fun login() {
         val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
-            setScopes(arrayOf(Scopes.PLAYLIST_READ_PRIVATE))
+            setScopes(arrayOf(
+                    Scopes.PLAYLIST_READ_PRIVATE,
+                    Scopes.PLAYLIST_MODIFY_PRIVATE,
+                    Scopes.PLAYLIST_MODIFY_PUBLIC))
         }.build()
 
         AuthenticationClient.openLoginActivity(context, REQUEST_CODE, request)

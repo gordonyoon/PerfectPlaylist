@@ -3,11 +3,10 @@ package com.example.gordonyoon.perfectplaylist.ui
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.example.gordonyoon.perfectplaylist.R
-import com.example.gordonyoon.perfectplaylist.androidextentions.snackbar
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.printFollowingPlaylistsSongs
+import com.example.gordonyoon.perfectplaylist.spotify.updatePPTemp
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view -> view.snackbar("Replace with your own action") }
+        fab.setOnClickListener { api.service.updatePPTemp() }
 
         authenticator.login()
     }
@@ -34,6 +33,5 @@ class MainActivity : AppCompatActivity() {
         // TODO: refresh access token when it expires
         val accessToken: String? = authenticator.getAccessToken(requestCode, resultCode, intent)
         api.setAccessToken(accessToken!!)
-        api.service.printFollowingPlaylistsSongs()
     }
 }
