@@ -4,11 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.gordonyoon.perfectplaylist.R
-import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
-import com.example.gordonyoon.perfectplaylist.spotify.printFollowingPlaylistsSongs
-import com.example.gordonyoon.perfectplaylist.spotify.updatePPTemp
+import com.example.gordonyoon.perfectplaylist.spotify.*
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.async
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -21,7 +20,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { api.service.updatePPTemp() }
+        fab.setOnClickListener {
+            async() {
+                val names = api.service.getNewTrackNames(api.service.me.id, "2016-03-05T00:00:00Z".toDate())
+                Timber.d("Names: $names")
+            }
+        }
 
         authenticator.login()
     }

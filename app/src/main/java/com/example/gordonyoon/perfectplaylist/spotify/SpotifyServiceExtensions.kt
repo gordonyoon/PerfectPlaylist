@@ -46,26 +46,38 @@ fun SpotifyService.printFollowingPlaylistsSongs() {
 
 fun SpotifyService.updatePPTemp(): Unit {
     async() {
-        val ppTempId: String = getPPTempId() ?: throw NotImplementedError("Perfect Playlist - Temp does not exist yet.")
-        val latestAddDate: Date = getPPTempLatestAddDate(ppTempId) ?: throw NotImplementedError("The playlist is empty.")
-        val tracks = listOf("spotify:track:5KK05UNvYyH2QMyBlHGKtW")
-        addTracksToPlaylist(me.id, ppTempId, null, mapOf("uris" to tracks))
+        val myId: String = me.id
+        val ppTempId: String = getPlaylists(myId).items.firstOrNull { it.name == "Perfect Playlist - Temp" }?.id
+                ?: throw NotImplementedError("Perfect Playlist - Temp does not exist yet.")
+        val latestAddDate: Date = getPlaylistTracks(myId, ppTempId).items.map { it.added_at.toDate() }.max()
+                ?: throw NotImplementedError("The playlist is empty.")
+//        val tracks = getNewTrackIds(myId, ppTempId, latestAddDate)
+//        addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to tracks))
     }
 }
 
-private fun SpotifyService.getPPTempId(): String? {
+fun SpotifyService.getNewTrackNames(myId: String, latestAdd: Date): List<String> {
     throwIfOnMainThread()
-    return getPlaylists(me.id).items.firstOrNull { it.name == "Perfect Playlist - Temp" }?.id
-}
-
-private fun SpotifyService.getPPTempLatestAddDate(ppTempId: String): Date? {
-    throwIfOnMainThread()
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    return getPlaylistTracks(me.id, ppTempId).items.map { sdf.parse(it.added_at) }.max()
+    val followingPlaylists = getPlaylists(myId).items.filter { it.owner.id != myId }
+    val trackIds: ArrayList<String> = ArrayList()
+    for (playlist in followingPlaylists) {
+        var offset = 0
+        do {
+            val pager = getPlaylistTracks(playlist.owner.id, playlist.id, mapOf("offset" to offset))
+            trackIds.addAll(pager.items.filter { it.added_at.toDate().after(latestAdd) }.map { it.track.name })
+            offset += pager.limit
+        } while (pager.next != null)
+    }
+    return trackIds
 }
 
 private fun SpotifyService.throwIfOnMainThread() {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalThreadStateException("hasPP() must be run on an asynchronous thread")
     }
+}
+
+fun String.toDate(): Date {
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    return sdf.parse(this)
 }
