@@ -2,6 +2,7 @@ package com.example.gordonyoon.perfectplaylist.spotify
 
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import kaaes.spotify.webapi.android.SpotifyService
 import org.jetbrains.anko.async
 import org.jetbrains.anko.uiThread
@@ -51,13 +52,18 @@ fun SpotifyService.updatePPTemp(): Unit {
                 ?: throw NotImplementedError("Perfect Playlist - Temp does not exist yet.")
         val latestAddDate: Date = getPlaylistTracks(myId, ppTempId).items.map { it.added_at.toDate() }.max()
                 ?: throw NotImplementedError("The playlist is empty.")
-        val latestAddDateSample: Date = "2016-03-04T00:00:00Z".toDate()
-        val tracks = getNewTrackUris(myId, latestAddDateSample)
-//        addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to tracks))
+        Timber.d("The last track was added on $latestAddDate")
+        val tracks = getNewTrackUris(myId, latestAddDate)
+        if (!tracks.isEmpty()) {
+            Timber.d("Now adding ${tracks.size} new tracks!")
+            addTracksToPlaylist(myId, ppTempId, tracks)
+        } else {
+            Timber.d("No new tracks were found!")
+        }
     }
 }
 
-fun SpotifyService.getNewTrackUris(myId: String, latestAdd: Date): List<String> {
+private fun SpotifyService.getNewTrackUris(myId: String, latestAdd: Date): List<String> {
     throwIfOnMainThread()
     val followingPlaylists = getPlaylists(myId).items.filter { it.owner.id != myId }
     val trackIds: ArrayList<String> = ArrayList()
@@ -72,23 +78,19 @@ fun SpotifyService.getNewTrackUris(myId: String, latestAdd: Date): List<String> 
     return trackIds
 }
 
-fun SpotifyService.addTracksToPlaylist(myId: String, ppTempId: String, trackIds: List<String>): Unit {
+private fun SpotifyService.addTracksToPlaylist(myId: String, ppTempId: String, trackIds: List<String>): Unit {
     throwIfOnMainThread()
     if (trackIds.isEmpty()) return
     val ITEM_LIMIT: Int = 100
     var start: Int = 0
     do {
         val end = if (start + ITEM_LIMIT - 1 < trackIds.size) start + ITEM_LIMIT - 1 else trackIds.size - 1
-        Timber.d("Start: $start")
-        Timber.d("End: $end")
-        Timber.d("Number in sliced list: ${trackIds.slice(start..end).size}")
-        Timber.d("Sliced list: ${trackIds.slice(start..end)}")
         addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to trackIds.slice(start..end)))
         start += 100
     } while (end < trackIds.size - 1)
 }
 
-private fun SpotifyService.throwIfOnMainThread() {
+fun throwIfOnMainThread() {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalThreadStateException("hasPP() must be run on an asynchronous thread")
     }
