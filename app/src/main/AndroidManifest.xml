@@ -26,6 +26,19 @@
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <receiver
+            android:name=".spotify.MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.spotify.music.playbackstatechanged"/>
+                <action android:name="com.spotify.music.metadatachanged"/>
+                <action android:name="com.spotify.music.queuechanged"/>
+            </intent-filter>
+        <!-- TODO: create a permission to restrict access to the receiver -->
+        </receiver>
     </application>
 
 </manifest>
