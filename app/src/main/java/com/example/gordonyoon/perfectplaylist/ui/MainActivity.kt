@@ -22,15 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         fab.setOnClickListener {
             async() {
-//                val myId = api.service.me.id
-//                val newTracks = api.service.getNewTrackUris(myId, "2016-03-05T00:00:00Z".toDate())
-//                Timber.d("Number of new tracks: ${newTracks.size}")
-//
-//                val ppTempId: String = api.service.getPlaylists(myId).items.firstOrNull { it.name == "Perfect Playlist - Temp" }?.id
-//                        ?: throw NotImplementedError("Perfect Playlist - Temp does not exist yet.")
-//                Timber.d("Perfect Playlist id: $ppTempId")
-//                api.service.addTracksToPlaylist(myId, ppTempId, newTracks)
-
                 api.service.updatePPTemp()
             }
         }
