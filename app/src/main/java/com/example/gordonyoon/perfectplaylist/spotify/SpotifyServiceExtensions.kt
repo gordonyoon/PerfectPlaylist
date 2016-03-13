@@ -2,7 +2,9 @@ package com.example.gordonyoon.perfectplaylist.spotify
 
 import android.os.Looper
 import kaaes.spotify.webapi.android.SpotifyService
-import kaaes.spotify.webapi.android.models.*
+import kaaes.spotify.webapi.android.models.PlaylistBase
+import kaaes.spotify.webapi.android.models.PlaylistTrack
+import kaaes.spotify.webapi.android.models.Track
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,7 +18,7 @@ fun SpotifyService.updatePPTemp(): Unit {
     val tracks = getNewTracks(myId, ppTempId, latestAddDate)
     if (!tracks.isEmpty()) {
         Timber.d("Now adding ${tracks.size} new tracks!\n${tracks.map { it.name }}")
-        //        addTracksToPlaylist(myId, ppTempId, tracks)
+        addTracksToPlaylist(myId, ppTempId, tracks)
     } else {
         Timber.d("No new tracks were found!")
     }
@@ -60,31 +62,36 @@ fun PlaylistBase.getTracks(spotify: SpotifyService, newestAdd: Date = Date(0)): 
 
 fun Set<Track>.filterSavedTracks(spotify: SpotifyService): List<Track> {
     throwIfOnMainThread()
-    val INC = 50
+    if (isEmpty()) return toList()
+    val ITEM_LIMIT = 50
     val newMinusSavedTracks = ArrayList<Track>()
-    var offset = 0
-    do {
-        val start = offset * INC
-        val end = if (start + INC - 1 < size) start + INC - 1 else size - 1
-        val slicedTracks = this.toList().slice(start..end)
-        val trackUrisString = slicedTracks.map { it.id }.joinToString(separator = ",")
-        val contains = spotify.containsMySavedTracks(trackUrisString)
-        slicedTracks.filterIndexedTo(newMinusSavedTracks) { i, track -> !contains[i] }
-        offset++
-    } while (start + INC < size)
+    toList().split(ITEM_LIMIT).map {
+        val trackIdsString = it.map { it.id }.joinToString(separator = ",")
+        val contains = spotify.containsMySavedTracks(trackIdsString)
+        it.filterIndexedTo(newMinusSavedTracks) { i, track -> !contains[i] }
+    }
     return newMinusSavedTracks
 }
 
-private fun SpotifyService.addTracksToPlaylist(myId: String, ppTempId: String, trackIds: List<String>): Unit {
+private fun SpotifyService.addTracksToPlaylist(myId: String, ppTempId: String, tracks: List<Track>): Unit {
     throwIfOnMainThread()
-    if (trackIds.isEmpty()) return
-    val ITEM_LIMIT: Int = 100
+    if (tracks.isEmpty()) return
+    val ITEM_LIMIT = 100
+    tracks.split(ITEM_LIMIT).map {
+        val trackUris = it.map { it.uri }
+        addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to trackUris))
+    }
+}
+
+fun <E> List<E>.split(increment: Int = 1): List<List<E>> {
+    val result: ArrayList<List<E>> = ArrayList()
     var start: Int = 0
     do {
-        val end = if (start + ITEM_LIMIT - 1 < trackIds.size) start + ITEM_LIMIT - 1 else trackIds.size - 1
-        addTracksToPlaylist(myId, ppTempId, null, mapOf("uris" to trackIds.slice(start..end)))
-        start += 100
-    } while (end < trackIds.size - 1)
+        val end = if (start + increment - 1 < size) start + increment - 1 else size - 1
+        result.add(slice(start..end))
+        start += increment
+    } while (start < size)
+    return result
 }
 
 fun throwIfOnMainThread() {

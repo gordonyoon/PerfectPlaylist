@@ -3,6 +3,7 @@ package com.example.gordonyoon.perfectplaylist
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.*
+import kotlin.jvm.internal.iterator
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -16,20 +17,25 @@ class ExampleUnitTest {
 
     @Test
     @Throws(Exception::class)
-    fun slice_isCorrect() {
-        val INC = 10
-        val size = 21
-        val newMinusSavedTracks = ArrayList<Int>()
-        val tracks = listOf(1..21).flatten()
-        var offset = 0
+    fun listSplit_isCorrect() {
+        val list1: List<Int> = listOf(0..11).flatten()
+        assertEquals(list1.split(5), listOf(listOf(0..4), listOf(5.rangeTo(9)), listOf(10.rangeTo(11))).map { it.flatten() })
+    }
+
+    fun <E> List<E>.split(increment: Int = 1): List<List<E>> {
+        val result: ArrayList<List<E>> = ArrayList()
+        var start: Int = 0
         do {
-            val start = offset * INC
-            val end = if (start + INC - 1 < size) start + INC - 1 else size - 1
-            val slicedTracks = tracks.slice(start..end)
-            val contains = tracks.slice(start..end).map { it % 3 == 0 }
-            slicedTracks.filterIndexedTo(newMinusSavedTracks) { i, track -> contains[i] }
-            offset++
-        } while (start + INC < size)
-        assertEquals(newMinusSavedTracks, listOf(3, 6, 9, 12, 15, 18, 21))
+            val end = if (start + increment - 1 < size) start + increment - 1 else size - 1
+            result.add(slice(start..end))
+            start += increment
+        } while (start < size)
+        return result
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun slice_isCorrect() {
+        assertEquals(listOf(0..5).flatten().slice(0..2), listOf(0, 1, 2))
     }
 }
