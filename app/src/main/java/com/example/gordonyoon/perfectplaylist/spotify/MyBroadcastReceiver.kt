@@ -26,21 +26,13 @@ class MyBroadcastReceiver: BroadcastReceiver() {
             val albumName = intent.getStringExtra("album")
             val trackName = intent.getStringExtra("track")
             val trackLengthInSec = intent.getIntExtra("length", 0)
-            Timber.d("trackId: $trackId")
-            Timber.d("artistName: $artistName")
-            Timber.d("albumName: $albumName")
-            Timber.d("trackName: $trackName")
-            Timber.d("trackLengthInSec: $trackLengthInSec")
-            // Do something with extracted information...
+            bus.send(NowPlayingTrack(trackId, artistName, albumName, trackName, trackLengthInSec))
         } else if (action.equals(BroadcastTypes.PLAYBACK_STATE_CHANGED)) {
             val playing = intent.getBooleanExtra("playing", false)
             val positionInMs = intent.getIntExtra("playbackPosition", 0)
-            Timber.d("playing: $playing")
-            Timber.d("positionInMs: $positionInMs")
-            // Do something with extracted information
+            bus.send(NowPlayingStateChange(playing, positionInMs))
         } else if (action.equals(BroadcastTypes.QUEUE_CHANGED)) {
-            // Sent only as a notification, your app may want to respond accordingly.
-            Timber.d("Queue changed")
+            bus.send(NowPlayingQueueChange())
         }
     }
 
@@ -50,4 +42,10 @@ class MyBroadcastReceiver: BroadcastReceiver() {
         const val QUEUE_CHANGED = SPOTIFY_PACKAGE + ".queuechanged"
         const val METADATA_CHANGED = SPOTIFY_PACKAGE + ".metadatachanged"
     }
+
+    data class NowPlayingTrack(val id: String, val artist: String, val album: String, val track: String, val length: Int)
+
+    data class NowPlayingStateChange(val playing: Boolean, val playbackPosition: Int)
+
+    class NowPlayingQueueChange()
 }
