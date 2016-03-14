@@ -28,7 +28,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <receiver
-            android:name=".spotify.MyBroadcastReceiver"
+            android:name=".spotify.NowPlayingReceiver"
             android:enabled="true"
             android:exported="true">
 

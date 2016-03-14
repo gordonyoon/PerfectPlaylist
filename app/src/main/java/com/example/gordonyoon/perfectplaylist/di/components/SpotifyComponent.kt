@@ -1,7 +1,7 @@
 package com.example.gordonyoon.perfectplaylist.di.components
 
 import com.example.gordonyoon.perfectplaylist.di.modules.SpotifyModule
-import com.example.gordonyoon.perfectplaylist.spotify.MyBroadcastReceiver
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
 import com.example.gordonyoon.perfectplaylist.ui.MainActivity
 import dagger.Component
 import javax.inject.Singleton
@@ -10,7 +10,5 @@ import javax.inject.Singleton
 @Component(modules = arrayOf(SpotifyModule::class))
 interface SpotifyComponent {
 
-    fun inject(myBroadcastReceiver: MyBroadcastReceiver)
-
-    fun inject(mainActivity: MainActivity)
+    fun inject(nowPlayingReceiver: NowPlayingReceiver)
 }

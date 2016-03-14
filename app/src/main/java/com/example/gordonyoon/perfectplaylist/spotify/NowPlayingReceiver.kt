@@ -8,7 +8,7 @@ import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import timber.log.Timber
 import javax.inject.Inject
 
-class MyBroadcastReceiver: BroadcastReceiver() {
+class NowPlayingReceiver : BroadcastReceiver() {
 
     @Inject lateinit var bus: RxBus
 
