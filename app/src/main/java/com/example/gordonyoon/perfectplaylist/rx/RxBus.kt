@@ -1,10 +1,10 @@
 package com.example.gordonyoon.perfectplaylist.rx
 
 import rx.Observable
-import rx.subjects.PublishSubject
+import rx.lang.kotlin.PublishSubject
 
 class RxBus {
-    private val mBus = PublishSubject.create<Any>()
+    private val mBus = PublishSubject<Any>()
 
     fun send(o: Any) {
         mBus.onNext(o)

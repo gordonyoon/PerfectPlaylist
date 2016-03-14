@@ -3,17 +3,17 @@ package com.example.gordonyoon.perfectplaylist.spotify
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.gordonyoon.perfectplaylist.androidextentions.getAppContext
+import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import timber.log.Timber
+import javax.inject.Inject
 
 class MyBroadcastReceiver: BroadcastReceiver() {
-    object BroadcastTypes {
-        const val SPOTIFY_PACKAGE = "com.spotify.music"
-        const val PLAYBACK_STATE_CHANGED = SPOTIFY_PACKAGE + ".playbackstatechanged"
-        const val QUEUE_CHANGED = SPOTIFY_PACKAGE + ".queuechanged"
-        const val METADATA_CHANGED = SPOTIFY_PACKAGE + ".metadatachanged"
-    }
+
+    @Inject lateinit var bus: RxBus
 
     override fun onReceive(context: Context, intent: Intent) {
+        context.getAppContext().spotifyComponent.inject(this)
         // This is sent with all broadcasts, regardless of type. The value is taken from
         // System.currentTimeMillis(), which you can compare to in order to determine how
         // old the event is.
@@ -42,5 +42,12 @@ class MyBroadcastReceiver: BroadcastReceiver() {
             // Sent only as a notification, your app may want to respond accordingly.
             Timber.d("Queue changed")
         }
+    }
+
+    object BroadcastTypes {
+        const val SPOTIFY_PACKAGE = "com.spotify.music"
+        const val PLAYBACK_STATE_CHANGED = SPOTIFY_PACKAGE + ".playbackstatechanged"
+        const val QUEUE_CHANGED = SPOTIFY_PACKAGE + ".queuechanged"
+        const val METADATA_CHANGED = SPOTIFY_PACKAGE + ".metadatachanged"
     }
 }
