@@ -7,5 +7,5 @@ object BroadcastTypes {
     const val METADATA_CHANGED       = SPOTIFY_PACKAGE + ".metadatachanged"
 
     const val SPOTIFY_WIDGET = "com.spotify.mobile.android.ui.widget"
-    const val WIDGET_NEXT    = SPOTIFY_WIDGET + ".next"
+    const val WIDGET_NEXT    = SPOTIFY_WIDGET + ".NEXT"
 }
