@@ -54,8 +54,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener    { api.service.updatePPTemp() }
-        save.setOnClickListener   { api.service.moveNowPlayingToPPFinal(lastPlayedTrack?.uri) }
+        fab.setOnClickListener { api.service.updatePPTemp() }
+
+        save.setOnClickListener {
+            api.service.moveNowPlayingToPPFinal(lastPlayedTrack?.uri)
+            sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
+        }
+
         delete.setOnClickListener {
             api.service.removeNowPlaying(lastPlayedTrack?.uri)
             sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
