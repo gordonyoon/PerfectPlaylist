@@ -11,4 +11,6 @@ import javax.inject.Singleton
 interface SpotifyComponent {
 
     fun inject(nowPlayingReceiver: NowPlayingReceiver)
+
+    fun inject(mainActivity: MainActivity)
 }
