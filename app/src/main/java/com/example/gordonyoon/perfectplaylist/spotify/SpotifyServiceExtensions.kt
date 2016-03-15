@@ -41,6 +41,18 @@ fun SpotifyService.removeNowPlaying(trackUri: String?): Unit {
     }
 }
 
-fun SpotifyService.moveNowPlayingToPPFinal(): Unit {
-    NotImplementedError()
+fun SpotifyService.moveNowPlayingToPPFinal(trackUri: String?): Unit {
+    if (trackUri == null) {
+        Timber.d("Did not capture track data.")
+        return
+    }
+
+    async() {
+        val myId      = me.id
+        val ppTempId  = getPpTempId(myId)
+        val ppFinalId = getPpFinalId(myId)
+
+//        removeNowPlaying(trackUri)
+        addToMySavedTracks(trackUri.removePrefix("spotify:track:"))
+    }
 }

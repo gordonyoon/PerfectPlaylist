@@ -15,6 +15,12 @@ fun SpotifyService.getPpTempId(myId: String): String {
             ?: throw NotImplementedError("Perfect Playlist - Temp does not exist yet.")
 }
 
+fun SpotifyService.getPpFinalId(myId: String): String {
+    throwIfOnMainThread()
+    return getPlaylists(myId).items.firstOrNull { it.name == "Perfect Playlist - Final" }?.id
+            ?: throw NotImplementedError("Perfect Playlist - Final does not exist yet.")
+}
+
 fun SpotifyService.getLatestAddDate(myId: String, ppTempId: String): Date {
     throwIfOnMainThread()
     return getPlaylistTracks(myId, ppTempId).items.map { it.added_at.toDate() }.max()
