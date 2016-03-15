@@ -55,7 +55,10 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener    { api.service.updatePPTemp() }
-        delete.setOnClickListener { api.service.removeNowPlaying(lastPlayedTrack?.uri) }
         save.setOnClickListener   { api.service.moveNowPlayingToPPFinal() }
+        delete.setOnClickListener {
+            api.service.removeNowPlaying(lastPlayedTrack?.uri)
+            sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
+        }
     }
 }

@@ -21,13 +21,6 @@ class NowPlayingReceiver : BroadcastReceiver() {
         }
     }
 
-    object BroadcastTypes {
-        const val SPOTIFY_PACKAGE        = "com.spotify.music"
-        const val PLAYBACK_STATE_CHANGED = SPOTIFY_PACKAGE + ".playbackstatechanged"
-        const val QUEUE_CHANGED          = SPOTIFY_PACKAGE + ".queuechanged"
-        const val METADATA_CHANGED       = SPOTIFY_PACKAGE + ".metadatachanged"
-    }
-
     data class NowPlayingTrack(val uri: String, val artist: String, val album: String, val name: String, val length: Int) {
 
         constructor(intent: Intent): this(
