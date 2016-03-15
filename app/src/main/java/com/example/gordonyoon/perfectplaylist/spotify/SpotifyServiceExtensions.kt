@@ -22,7 +22,12 @@ fun SpotifyService.updatePPTemp(): Unit {
     }
 }
 
-fun SpotifyService.removeNowPlaying(trackUri: String): Unit {
+fun SpotifyService.removeNowPlaying(trackUri: String?): Unit {
+    if (trackUri == null) {
+        Timber.d("Did not capture track data.")
+        return
+    }
+
     async() {
         val myId     = me.id
         val ppTempId = getPpTempId(myId)

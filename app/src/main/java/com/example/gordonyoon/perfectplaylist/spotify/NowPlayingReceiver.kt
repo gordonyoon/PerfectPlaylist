@@ -28,7 +28,7 @@ class NowPlayingReceiver : BroadcastReceiver() {
         const val METADATA_CHANGED       = SPOTIFY_PACKAGE + ".metadatachanged"
     }
 
-    data class NowPlayingTrack(val id: String, val artist: String, val album: String, val track: String, val length: Int) {
+    data class NowPlayingTrack(val uri: String, val artist: String, val album: String, val name: String, val length: Int) {
 
         constructor(intent: Intent): this(
                 intent.getStringExtra("id"),
