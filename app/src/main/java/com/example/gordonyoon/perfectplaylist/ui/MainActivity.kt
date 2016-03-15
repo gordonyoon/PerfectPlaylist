@@ -6,10 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import com.example.gordonyoon.perfectplaylist.R
 import com.example.gordonyoon.perfectplaylist.androidextentions.getAppContext
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
-import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
-import com.example.gordonyoon.perfectplaylist.spotify.moveNowPlayingToPPFinal
-import com.example.gordonyoon.perfectplaylist.spotify.removeNowPlaying
-import com.example.gordonyoon.perfectplaylist.spotify.updatePPTemp
+import com.example.gordonyoon.perfectplaylist.spotify.*
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -23,10 +20,20 @@ class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var bus: RxBus
 
+    var lastPlayedTrack: NowPlayingReceiver.NowPlayingTrack? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getAppContext().spotifyComponent.inject(this)
         initializeUi()
+
+        bus.toObserverable().subscribe {
+            if (it is NowPlayingReceiver.NowPlayingTrack) {
+                lastPlayedTrack = it
+                trackTitle.text = it.name
+                artistName.text = it.artist
+            }
+        }
 
         authenticator.login()
     }
@@ -48,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener    { api.service.updatePPTemp() }
-        delete.setOnClickListener { api.service.removeNowPlaying("") } // TODO: get current track from bus
+        delete.setOnClickListener { api.service.removeNowPlaying(lastPlayedTrack?.uri) }
         save.setOnClickListener   { api.service.moveNowPlayingToPPFinal() }
     }
 }
