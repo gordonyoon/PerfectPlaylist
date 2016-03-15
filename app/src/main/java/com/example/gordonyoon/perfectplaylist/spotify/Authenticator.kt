@@ -22,7 +22,8 @@ class Authenticator(val context: Activity) {
                     Scopes.PLAYLIST_READ_PRIVATE,
                     Scopes.PLAYLIST_MODIFY_PRIVATE,
                     Scopes.PLAYLIST_MODIFY_PUBLIC,
-                    Scopes.USER_LIBRARY_MODIFY))
+                    Scopes.USER_LIBRARY_MODIFY,
+                    Scopes.USER_LIBRARY_READ))
         }.build()
 
         AuthenticationClient.openLoginActivity(context, REQUEST_CODE, request)

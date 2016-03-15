@@ -49,10 +49,13 @@ fun SpotifyService.moveNowPlayingToPPFinal(trackUri: String?): Unit {
 
     async() {
         val myId      = me.id
-        val ppTempId  = getPpTempId(myId)
         val ppFinalId = getPpFinalId(myId)
 
-//        removeNowPlaying(trackUri)
+        removeNowPlaying(trackUri)
         addToMySavedTracks(trackUri.removePrefix("spotify:track:"))
+        if (!playlistContainsTrack(myId, ppFinalId, trackUri)) {
+            addTracksToPlaylist(myId, ppFinalId, null, mapOf("uris" to listOf(trackUri)))
+            Timber.d("Go check Perfect Playlist - Temp!")
+        }
     }
 }
