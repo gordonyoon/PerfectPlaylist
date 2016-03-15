@@ -64,7 +64,7 @@ class NowPlayingReceiver : BroadcastReceiver() {
 
     class NowPlayingQueueChange(intent: Intent) {
         init {
-            if (intent.action != BroadcastTypes.PLAYBACK_STATE_CHANGED) {
+            if (intent.action != BroadcastTypes.QUEUE_CHANGED) {
                 throw IllegalArgumentException()
             }
         }
