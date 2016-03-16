@@ -15,6 +15,7 @@ import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
@@ -66,14 +67,21 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        trackTitle.apply {
+            isSelected = false
+            onClick { isSelected = !isSelected }
+        }
+
         fab.setOnClickListener    { controller.refresh() }
         save.setOnClickListener   { controller.nowPlayingSave(nowPlayingState.nowPlaying) }
         delete.setOnClickListener { controller.nowPlayingDelete(nowPlayingState.nowPlaying) }
     }
 
     override fun updateUi(trackTitle: String, artistName: String) {
-        this.trackTitle.text = trackTitle
         this.artistName.text = artistName
+        this.trackTitle.text = trackTitle
+
+        this.trackTitle.isSelected = false
     }
 }
 

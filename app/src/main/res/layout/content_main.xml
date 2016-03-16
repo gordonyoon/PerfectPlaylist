@@ -19,7 +19,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/artistName"
         android:layout_centerHorizontal="true"
-        android:text="Large Text"
+        android:ellipsize="marquee"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -29,35 +31,34 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttons"
         android:layout_centerHorizontal="true"
-        android:text="Medium Text"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/save"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_weight="1"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp"
             android:text="Save"/>
 
         <Button
             android:id="@+id/delete"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_weight="1"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp"
             android:text="Delete"/>
     </LinearLayout>
 
