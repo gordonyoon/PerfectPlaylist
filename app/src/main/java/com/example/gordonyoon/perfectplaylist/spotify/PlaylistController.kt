@@ -10,6 +10,7 @@ import kaaes.spotify.webapi.android.models.TrackToRemove
 import kaaes.spotify.webapi.android.models.TracksToRemove
 import org.jetbrains.anko.async
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 import javax.inject.Inject
 
 @PerActivity
@@ -40,15 +41,19 @@ class PlaylistController() {
             val id  = uri.removePrefix("spotify:track:")
 
             spotify.addToMySavedTracks(id)
+            spotify.removeTrackFromPlaylist(myId, ppTempId, uri)
 
             if (!spotify.playlistContainsTrack(myId, ppFinalId, uri)) {
                 spotify.addTrackToPlaylist(myId, ppFinalId, uri)
-                context.toast("1 track saved: ${track.name}")
-            } else {
-                context.toast("${track.name} is already saved!")
             }
 
-            spotify.removeTrackFromPlaylist(myId, ppTempId, uri)
+            uiThread {
+                if (!spotify.playlistContainsTrack(myId, ppFinalId, uri)) {
+                    context.toast("1 track saved: ${track.name}")
+                } else {
+                    context.toast("${track.name} is already saved!")
+                }
+            }
         }
     }
 
@@ -64,9 +69,11 @@ class PlaylistController() {
             val ppTempId = spotify.getPpTempId(myId)
 
             spotify.removeTrackFromPlaylist(myId, ppTempId, track.uri)
-            context.toast("1 track removed: ${track.name}")
-
             nextTrack(context)
+
+            uiThread {
+                context.toast("1 track removed: ${track.name}")
+            }
         }
     }
 
@@ -80,9 +87,14 @@ class PlaylistController() {
 
             if (!tracks.isEmpty()) {
                 spotify.addTracksToPlaylist(myId, ppTempId, tracks)
-                context.toast("Now adding ${tracks.size} new track${if (tracks.size > 1) "s" else ""}")
-            } else {
-                context.toast("You're all up to date!")
+            }
+
+            uiThread {
+                if (!tracks.isEmpty()) {
+                    context.toast("Now adding ${tracks.size} new track${if (tracks.size > 1) "s" else ""}")
+                } else {
+                    context.toast("You're all up to date!")
+                }
             }
         }
     }
