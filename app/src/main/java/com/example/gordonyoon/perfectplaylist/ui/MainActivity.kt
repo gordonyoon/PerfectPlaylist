@@ -21,11 +21,12 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
 
-    override val component: ActivityComponent
-        get() = DaggerActivityComponent.builder()
+    override val component: ActivityComponent by lazy {
+        DaggerActivityComponent.builder()
                 .appComponent(getAppContext().component)
                 .activityModule(ActivityModule(MainActivity@this))
                 .build()
+    }
 
     @Inject lateinit var bus: RxBus
     @Inject lateinit var api: SpotifyApi
