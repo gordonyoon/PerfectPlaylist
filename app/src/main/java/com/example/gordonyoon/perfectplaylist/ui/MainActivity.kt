@@ -10,8 +10,9 @@ import com.example.gordonyoon.perfectplaylist.di.components.ActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.components.DaggerActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
-import com.example.gordonyoon.perfectplaylist.spotify.*
-import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
+import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
+import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
     @Inject lateinit var bus: RxBus
     @Inject lateinit var api: SpotifyApi
     @Inject lateinit var authenticator: Authenticator
+    @Inject lateinit var controller: PlaylistController
 
     var lastPlayedTrack: NowPlayingReceiver.NowPlayingTrack? = null
 
@@ -37,14 +39,7 @@ class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
         component.inject(this)
 
         initializeUi()
-
-        bus.toObserverable().subscribe {
-            if (it is NowPlayingReceiver.NowPlayingTrack) {
-                lastPlayedTrack = it
-                trackTitle.text = it.name
-                artistName.text = it.artist
-            }
-        }
+        initializeBus()
 
         authenticator.login()
     }
@@ -65,16 +60,18 @@ class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { api.service.updatePPTemp() }
+        fab.setOnClickListener    { controller.refresh() }
+        save.setOnClickListener   { controller.nowPlayingSave(lastPlayedTrack) }
+        delete.setOnClickListener { controller.nowPlayingDelete(lastPlayedTrack) }
+    }
 
-        save.setOnClickListener {
-            api.service.moveNowPlayingToPPFinal(lastPlayedTrack?.uri)
-            sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
-        }
-
-        delete.setOnClickListener {
-            api.service.removeNowPlaying(lastPlayedTrack?.uri)
-            sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
+    fun initializeBus() {
+        bus.toObserverable().subscribe {
+            if (it is NowPlayingReceiver.NowPlayingTrack) {
+                lastPlayedTrack = it
+                trackTitle.text = it.name
+                artistName.text = it.artist
+            }
         }
     }
 }
