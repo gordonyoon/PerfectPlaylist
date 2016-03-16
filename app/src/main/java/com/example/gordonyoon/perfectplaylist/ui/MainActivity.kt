@@ -26,9 +26,8 @@ class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
                 .activityModule(ActivityModule(MainActivity@this))
                 .build()
 
-    val api: SpotifyApi = SpotifyApi()
-
     @Inject lateinit var bus: RxBus
+    @Inject lateinit var api: SpotifyApi
     @Inject lateinit var authenticator: Authenticator
 
     var lastPlayedTrack: NowPlayingReceiver.NowPlayingTrack? = null
