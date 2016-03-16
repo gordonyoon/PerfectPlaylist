@@ -1,14 +1,15 @@
 package com.example.gordonyoon.perfectplaylist
 
 import android.app.Application
-import com.example.gordonyoon.perfectplaylist.di.components.DaggerSpotifyComponent
-import com.example.gordonyoon.perfectplaylist.di.components.SpotifyComponent
-import com.example.gordonyoon.perfectplaylist.di.modules.SpotifyModule
+import com.example.gordonyoon.perfectplaylist.di.components.AppComponent
+import com.example.gordonyoon.perfectplaylist.di.components.DaggerAppComponent
+import com.example.gordonyoon.perfectplaylist.di.modules.AppModule
 import timber.log.Timber
 
 class App : Application() {
-    val spotifyComponent: SpotifyComponent by lazy {
-        DaggerSpotifyComponent.builder().spotifyModule(SpotifyModule()).build()
+
+    val appComponent: AppComponent by lazy {
+        DaggerAppComponent.builder().appModule(AppModule()).build()
     }
 
     override fun onCreate() {

@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.spotify
+package com.example.gordonyoon.perfectplaylist.spotify.constants
 
 object BroadcastTypes {
     const val SPOTIFY_PACKAGE        = "com.spotify.music"

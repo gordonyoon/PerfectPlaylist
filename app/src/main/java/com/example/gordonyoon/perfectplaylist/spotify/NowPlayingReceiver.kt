@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.androidextentions.getAppContext
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
+import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import javax.inject.Inject
 
 class NowPlayingReceiver : BroadcastReceiver() {
@@ -12,7 +13,7 @@ class NowPlayingReceiver : BroadcastReceiver() {
     @Inject lateinit var bus: RxBus
 
     override fun onReceive(context: Context, intent: Intent) {
-        context.getAppContext().spotifyComponent.inject(this)
+        context.getAppContext().appComponent.inject(this)
 
         when (intent.action) {
             BroadcastTypes.METADATA_CHANGED       -> bus.send(NowPlayingTrack(intent))

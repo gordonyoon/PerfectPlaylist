@@ -5,26 +5,45 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.gordonyoon.perfectplaylist.R
 import com.example.gordonyoon.perfectplaylist.androidextentions.getAppContext
+import com.example.gordonyoon.perfectplaylist.di.HasComponent
+import com.example.gordonyoon.perfectplaylist.di.components.ActivityComponent
+import com.example.gordonyoon.perfectplaylist.di.components.DaggerActivityComponent
+import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
+import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.*
+import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+//@PerActivity
+class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
 
-    val authenticator: Authenticator by lazy { Authenticator(this@MainActivity) }
+    override fun getComponent(): ActivityComponent {
+        return DaggerActivityComponent.builder()
+                .appComponent(getAppContext().appComponent)
+                .activityModule(ActivityModule(MainActivity@this))
+                .build()
+    }
+
     val api: SpotifyApi = SpotifyApi()
 
-    @Inject lateinit var bus: RxBus
+    val bus: RxBus = RxBus()
+//    @Inject lateinit var bus: RxBus
+
+//    val authenticator: Authenticator by lazy { Authenticator(MainActivity@this) }
+    @Inject lateinit var authenticator: Authenticator
 
     var lastPlayedTrack: NowPlayingReceiver.NowPlayingTrack? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getAppContext().spotifyComponent.inject(this)
+//        getAppContext().appComponent.inject(this)
+        component.inject(this)
+
         initializeUi()
 
         bus.toObserverable().subscribe {

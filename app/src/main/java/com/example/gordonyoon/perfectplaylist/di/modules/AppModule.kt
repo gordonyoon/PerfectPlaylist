@@ -6,7 +6,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class SpotifyModule {
+class AppModule {
 
     @Provides
     @Singleton

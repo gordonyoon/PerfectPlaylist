@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.spotify
+package com.example.gordonyoon.perfectplaylist.spotify.constants
 
 object Scopes {
     const val PLAYLIST_READ_PRIVATE = "playlist-read-private"
