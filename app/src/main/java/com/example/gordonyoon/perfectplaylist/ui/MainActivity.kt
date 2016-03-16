@@ -9,9 +9,8 @@ import com.example.gordonyoon.perfectplaylist.di.HasComponent
 import com.example.gordonyoon.perfectplaylist.di.components.ActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.components.DaggerActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
-import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
-import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,7 +18,7 @@ import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
+class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasComponent<ActivityComponent> {
 
     override val component: ActivityComponent by lazy {
         DaggerActivityComponent.builder()
@@ -28,19 +27,15 @@ class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
                 .build()
     }
 
-    @Inject lateinit var bus: RxBus
     @Inject lateinit var api: SpotifyApi
     @Inject lateinit var authenticator: Authenticator
     @Inject lateinit var controller: PlaylistController
-
-    var lastPlayedTrack: NowPlayingReceiver.NowPlayingTrack? = null
+    @Inject lateinit var nowPlayingState: NowPlayingState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-
         initializeUi()
-        initializeBus()
 
         authenticator.login()
     }
@@ -57,22 +52,29 @@ class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        nowPlayingState.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        nowPlayingState.unregister()
+    }
+
     fun initializeUi() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener    { controller.refresh() }
-        save.setOnClickListener   { controller.nowPlayingSave(lastPlayedTrack) }
-        delete.setOnClickListener { controller.nowPlayingDelete(lastPlayedTrack) }
+        save.setOnClickListener   { controller.nowPlayingSave(nowPlayingState.nowPlaying) }
+        delete.setOnClickListener { controller.nowPlayingDelete(nowPlayingState.nowPlaying) }
     }
 
-    fun initializeBus() {
-        bus.toObserverable().subscribe {
-            if (it is NowPlayingReceiver.NowPlayingTrack) {
-                lastPlayedTrack = it
-                trackTitle.text = it.name
-                artistName.text = it.artist
-            }
-        }
+    override fun updateUi(trackTitle: String, artistName: String) {
+        this.trackTitle.text = trackTitle
+        this.artistName.text = artistName
     }
 }
+
+

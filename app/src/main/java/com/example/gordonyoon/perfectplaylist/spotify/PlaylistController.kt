@@ -24,8 +24,8 @@ class PlaylistController() {
         this.context = context
     }
 
-    fun nowPlayingSave(track: NowPlayingReceiver.NowPlayingTrack?) {
-        if (track == null) {
+    fun nowPlayingSave(track: NowPlayingReceiver.NowPlayingTrack) {
+        if (track.isEmpty()) {
             context.toast("Play a song!")
             return
         }
@@ -52,8 +52,8 @@ class PlaylistController() {
         }
     }
 
-    fun nowPlayingDelete(track: NowPlayingReceiver.NowPlayingTrack?) {
-        if (track == null) {
+    fun nowPlayingDelete(track: NowPlayingReceiver.NowPlayingTrack) {
+        if (track.isEmpty()) {
             context.toast("Play a song!")
             return
         }

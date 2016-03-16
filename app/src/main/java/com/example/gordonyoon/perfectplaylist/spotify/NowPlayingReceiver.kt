@@ -22,7 +22,7 @@ class NowPlayingReceiver : BroadcastReceiver() {
         }
     }
 
-    data class NowPlayingTrack(val uri: String, val artist: String, val album: String, val name: String, val length: Int) {
+    data class NowPlayingTrack(val uri: String = "", val artist: String = "", val album: String = "", val name: String = "", val length: Int = -1) {
 
         constructor(intent: Intent): this(
                 intent.getStringExtra("id"),
@@ -39,6 +39,10 @@ class NowPlayingReceiver : BroadcastReceiver() {
                     || !intent.hasExtra("length")) {
                 throw IllegalArgumentException()
             }
+        }
+
+        fun isEmpty(): Boolean {
+            return (uri.isEmpty() || artist.isEmpty() || album.isEmpty() || name.isEmpty() || length < 0)
         }
     }
 
