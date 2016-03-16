@@ -13,7 +13,7 @@ class NowPlayingReceiver : BroadcastReceiver() {
     @Inject lateinit var bus: RxBus
 
     override fun onReceive(context: Context, intent: Intent) {
-        context.getAppContext().appComponent.inject(this)
+        context.getAppContext().component.inject(this)
 
         when (intent.action) {
             BroadcastTypes.METADATA_CHANGED       -> bus.send(NowPlayingTrack(intent))

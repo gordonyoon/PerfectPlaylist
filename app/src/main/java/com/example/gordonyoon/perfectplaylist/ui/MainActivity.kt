@@ -9,7 +9,6 @@ import com.example.gordonyoon.perfectplaylist.di.HasComponent
 import com.example.gordonyoon.perfectplaylist.di.components.ActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.components.DaggerActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
-import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.*
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
@@ -19,29 +18,23 @@ import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
-//@PerActivity
 class MainActivity : AppCompatActivity(), HasComponent<ActivityComponent> {
 
-    override fun getComponent(): ActivityComponent {
-        return DaggerActivityComponent.builder()
-                .appComponent(getAppContext().appComponent)
+    override val component: ActivityComponent
+        get() = DaggerActivityComponent.builder()
+                .appComponent(getAppContext().component)
                 .activityModule(ActivityModule(MainActivity@this))
                 .build()
-    }
 
     val api: SpotifyApi = SpotifyApi()
 
-    val bus: RxBus = RxBus()
-//    @Inject lateinit var bus: RxBus
-
-//    val authenticator: Authenticator by lazy { Authenticator(MainActivity@this) }
+    @Inject lateinit var bus: RxBus
     @Inject lateinit var authenticator: Authenticator
 
     var lastPlayedTrack: NowPlayingReceiver.NowPlayingTrack? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        getAppContext().appComponent.inject(this)
         component.inject(this)
 
         initializeUi()
