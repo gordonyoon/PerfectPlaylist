@@ -4,7 +4,6 @@ import com.example.gordonyoon.perfectplaylist.extensions.subtractWithBy
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.*
-import kotlin.jvm.internal.iterator
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.

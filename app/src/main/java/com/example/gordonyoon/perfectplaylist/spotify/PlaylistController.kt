@@ -1,14 +1,11 @@
 package com.example.gordonyoon.perfectplaylist.spotify
 
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.extensions.addTracksToPlaylist
 import com.example.gordonyoon.perfectplaylist.extensions.getLatestAddDate
 import com.example.gordonyoon.perfectplaylist.extensions.getNewTracks
 import com.example.gordonyoon.perfectplaylist.extensions.getPpTempId
-import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import kaaes.spotify.webapi.android.SpotifyApi
 import org.jetbrains.anko.async
 import org.jetbrains.anko.toast
