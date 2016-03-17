@@ -4,15 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.gordonyoon.perfectplaylist.R
-import com.example.gordonyoon.perfectplaylist.extensions.getAppContext
 import com.example.gordonyoon.perfectplaylist.di.HasComponent
 import com.example.gordonyoon.perfectplaylist.di.components.ActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.components.DaggerActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
+import com.example.gordonyoon.perfectplaylist.extensions.getAppContext
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
-import io.realm.Realm
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*

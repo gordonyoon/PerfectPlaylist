@@ -7,8 +7,6 @@ import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.extensions.*
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import kaaes.spotify.webapi.android.SpotifyApi
-import kaaes.spotify.webapi.android.models.TrackToRemove
-import kaaes.spotify.webapi.android.models.TracksToRemove
 import org.jetbrains.anko.async
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread

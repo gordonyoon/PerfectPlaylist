@@ -1,5 +1,6 @@
 package com.example.gordonyoon.perfectplaylist
 
+import com.example.gordonyoon.perfectplaylist.extensions.subtractWithBy
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.*
@@ -35,7 +36,15 @@ class ExampleUnitTest {
 
     @Test
     @Throws(Exception::class)
-    fun slice_isCorrect() {
-        assertEquals(listOf(0..5).flatten().slice(0..2), listOf(0, 1, 2))
+    fun subtractBy_isCorrect() {
+        val list1 = ArrayList<SubtractByHelper>()
+        val list2 = ArrayList<SubtractByHelper>()
+
+        for (i in 1..6) list1.add(SubtractByHelper(x = i))
+        for (i in 4..6) list2.add(SubtractByHelper(x = i))
+
+        assertEquals(3, list1.subtractWithBy(list2) { it.x }.size)
     }
+
+    class SubtractByHelper(val x: Int = 0)
 }

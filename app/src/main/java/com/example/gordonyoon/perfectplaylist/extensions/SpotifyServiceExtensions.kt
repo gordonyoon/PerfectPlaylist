@@ -31,8 +31,8 @@ fun SpotifyService.getNewTracks(myId: String, ppTempId: String, latestAdd: Date)
     val ppTempTracks = getPlaylist(myId, ppTempId).getTracks(this)
     val newTracks = followingPlaylists
             .flatMap { it.getTracks(this, latestAdd) }
-            .distinct()
-            .subtract(ppTempTracks)
+            .distinctBy { it.id }
+            .subtractWithBy(ppTempTracks) { it.id }
             .filterSavedTracks(this)
     return newTracks
 }
@@ -66,12 +66,12 @@ fun SpotifyService.getAllPlaylistTracks(ownerId: String, playlistId: String, new
     return tracks.map { it.track }
 }
 
-fun Set<Track>.filterSavedTracks(spotify: SpotifyService): List<Track> {
+fun List<Track>.filterSavedTracks(spotify: SpotifyService): List<Track> {
     throwIfOnMainThread()
     if (isEmpty()) return toList()
     val ITEM_LIMIT = 50
     val newMinusSavedTracks = ArrayList<Track>()
-    toList().split(ITEM_LIMIT).map {
+    split(ITEM_LIMIT).map {
         val trackIdsString = it.map { it.id }.joinToString(separator = ",")
         val contains = spotify.containsMySavedTracks(trackIdsString)
         it.filterIndexedTo(newMinusSavedTracks) { i, track -> !contains[i] }
