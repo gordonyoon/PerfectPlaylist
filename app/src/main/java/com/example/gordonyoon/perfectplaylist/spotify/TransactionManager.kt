@@ -8,8 +8,10 @@ import com.example.gordonyoon.perfectplaylist.R
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.extensions.*
 import com.example.gordonyoon.perfectplaylist.models.PlaylistTransaction
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver.NowPlayingTrack
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import io.realm.Realm
+import io.realm.RealmResults
 import kaaes.spotify.webapi.android.SpotifyApi
 import org.jetbrains.anko.async
 import javax.inject.Inject
@@ -26,55 +28,43 @@ class TransactionManager {
         this.api = api
     }
 
-    fun save(track: NowPlayingReceiver.NowPlayingTrack) {
-        val transaction = PlaylistTransaction(track).apply { save = true }
-
-        val realm = Realm.getDefaultInstance().apply {
-            beginTransaction()
+    fun save(track: NowPlayingTrack) {
+        Realm.getDefaultInstance().tryCommitClose {
+            val transaction = PlaylistTransaction(track).apply { save = true }
             copyToRealmOrUpdate(transaction)
         }
 
         Snackbar.make(context.findViewById(R.id.fab), "SAVED: ${track.name}", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", { realm.cancelTransaction() })
-                .setCallback(object: Snackbar.Callback() {
-                    override fun onDismissed(snackbar: Snackbar?, event: Int) {
-                        super.onDismissed(snackbar, event)
-                        if (event != DISMISS_EVENT_ACTION) {
-                            realm.apply {
-                                commitTransaction()
-                                close()
-                            }
-                        }
-                        sync()
-                    }
-                })
+                .setAction("UNDO", { reverseCommit(track) })
+                .setOnDismissedNotActionCallback { sync() }
                 .show()
     }
 
-    fun remove(track: NowPlayingReceiver.NowPlayingTrack) {
-        val transaction = PlaylistTransaction(track).apply { remove = true }
-
-        val realm = Realm.getDefaultInstance().apply {
-            beginTransaction()
+    fun remove(track: NowPlayingTrack) {
+        Realm.getDefaultInstance().tryCommitClose {
+            val transaction = PlaylistTransaction(track).apply { remove = true }
             copyToRealmOrUpdate(transaction)
+
+            Snackbar.make(context.findViewById(R.id.fab), "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
+                    .setAction("UNDO", { reverseCommit(track) })
+                    .setOnDismissedNotActionCallback {
+                        sync()
+                        nextTrack(context)
+                    }
+                    .show()
         }
 
-        Snackbar.make(context.findViewById(R.id.fab), "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", { realm.cancelTransaction() })
-                .setCallback(object: Snackbar.Callback() {
-                    override fun onDismissed(snackbar: Snackbar?, event: Int) {
-                        super.onDismissed(snackbar, event)
-                        if (event != DISMISS_EVENT_ACTION) {
-                            realm.apply {
-                                commitTransaction()
-                                close()
-                            }
-                            nextTrack(context)
-                        }
-                        sync()
-                    }
-                })
-                .show()
+    }
+
+    private fun reverseCommit(track: NowPlayingTrack) {
+        val results: RealmResults<PlaylistTransaction> = Realm.getDefaultInstance()
+                .where(PlaylistTransaction::class.java)
+                .equalTo("uri", track.uri).findAll()
+        if (results.size > 0) {
+            Realm.getDefaultInstance().tryCommitClose {
+                results.clear()
+            }
+        }
     }
 
     fun sync() {
@@ -83,23 +73,23 @@ class TransactionManager {
             val (save, remove) = transactions.partition { it.save.xor(it.remove) && it.save }
             saveBatch(save.map { it.toNowPlayingTrack() })
             removeBatch(remove.map { it.toNowPlayingTrack() })
-            Realm.getDefaultInstance().runAndClose {
+            Realm.getDefaultInstance().tryCommitClose {
                 clear(PlaylistTransaction::class.java)
             }
         }
     }
 
-    private fun saveBatch(tracks: List<NowPlayingReceiver.NowPlayingTrack>) {
+    private fun saveBatch(tracks: List<NowPlayingTrack>) {
         if (tracks.isEmpty()) return
 
         val spotify = api.service
         async() {
-            val myId      = spotify.me.id
-            val ppTempId  = spotify.getPpTempId(myId)
+            val myId = spotify.me.id
+            val ppTempId = spotify.getPpTempId(myId)
             val ppFinalId = spotify.getPpFinalId(myId)
 
             val uris = tracks.map { it.uri }
-            val ids  = uris.map { it.removePrefix("spotify:track:") }
+            val ids = uris.map { it.removePrefix("spotify:track:") }
 
             spotify.addTracksToMyLibrary(ids)
             spotify.addDistinctTracksToPlaylist(myId, ppFinalId, uris)
@@ -107,12 +97,12 @@ class TransactionManager {
         }
     }
 
-    private fun removeBatch(tracks: List<NowPlayingReceiver.NowPlayingTrack>) {
+    private fun removeBatch(tracks: List<NowPlayingTrack>) {
         if (tracks.isEmpty()) return
 
         val spotify = api.service
         async() {
-            val myId     = spotify.me.id
+            val myId = spotify.me.id
             val ppTempId = spotify.getPpTempId(myId)
 
             spotify.removeTracksFromPlaylist(myId, ppTempId, tracks.map { it.uri })
