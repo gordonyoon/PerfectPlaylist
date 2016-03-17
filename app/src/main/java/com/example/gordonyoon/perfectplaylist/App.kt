@@ -7,6 +7,8 @@ import com.example.gordonyoon.perfectplaylist.di.components.DaggerAppComponent
 import com.example.gordonyoon.perfectplaylist.di.modules.AppModule
 import com.facebook.stetho.Stetho
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import timber.log.Timber
 import kotlin.reflect.KProperty
 
@@ -19,6 +21,9 @@ class App : Application(), HasComponent<AppComponent> {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
+
+        val config = RealmConfiguration.Builder(this).build()
+        Realm.setDefaultConfiguration(config)
 
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)

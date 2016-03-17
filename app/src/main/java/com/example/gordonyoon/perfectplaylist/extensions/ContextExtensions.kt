@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.androidextentions
+package com.example.gordonyoon.perfectplaylist.extensions
 
 import android.content.Context
 import android.net.ConnectivityManager

@@ -3,7 +3,7 @@ package com.example.gordonyoon.perfectplaylist.spotify
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.example.gordonyoon.perfectplaylist.androidextentions.getAppContext
+import com.example.gordonyoon.perfectplaylist.extensions.getAppContext
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import javax.inject.Inject

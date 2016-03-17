@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.spotify
+package com.example.gordonyoon.perfectplaylist.extensions
 
 import android.os.Looper
 import kaaes.spotify.webapi.android.SpotifyService

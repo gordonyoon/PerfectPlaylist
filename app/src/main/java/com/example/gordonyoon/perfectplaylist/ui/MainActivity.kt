@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.gordonyoon.perfectplaylist.R
-import com.example.gordonyoon.perfectplaylist.androidextentions.getAppContext
+import com.example.gordonyoon.perfectplaylist.extensions.getAppContext
 import com.example.gordonyoon.perfectplaylist.di.HasComponent
 import com.example.gordonyoon.perfectplaylist.di.components.ActivityComponent
 import com.example.gordonyoon.perfectplaylist.di.components.DaggerActivityComponent
@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
                 .build()
     }
 
-    @Inject lateinit var realm: Realm
     @Inject lateinit var api: SpotifyApi
     @Inject lateinit var authenticator: Authenticator
     @Inject lateinit var controller: PlaylistController

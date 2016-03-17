@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
+import com.example.gordonyoon.perfectplaylist.extensions.*
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import kaaes.spotify.webapi.android.SpotifyApi
 import kaaes.spotify.webapi.android.models.TrackToRemove
@@ -43,12 +44,14 @@ class PlaylistController() {
             spotify.addToMySavedTracks(id)
             spotify.removeTrackFromPlaylist(myId, ppTempId, uri)
 
+            var didSave = false
             if (!spotify.playlistContainsTrack(myId, ppFinalId, uri)) {
                 spotify.addTrackToPlaylist(myId, ppFinalId, uri)
+                didSave = true
             }
 
             uiThread {
-                if (!spotify.playlistContainsTrack(myId, ppFinalId, uri)) {
+                if (didSave) {
                     context.toast("1 track saved: ${track.name}")
                 } else {
                     context.toast("${track.name} is already saved!")
