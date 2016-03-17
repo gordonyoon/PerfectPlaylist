@@ -1,13 +1,16 @@
 package com.example.gordonyoon.perfectplaylist.spotify
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.support.design.widget.Snackbar
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.extensions.*
 import com.example.gordonyoon.perfectplaylist.models.PlaylistTransaction
+import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import io.realm.Realm
 import kaaes.spotify.webapi.android.SpotifyApi
 import org.jetbrains.anko.async
-import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 @PerActivity
@@ -23,21 +26,55 @@ class TransactionManager {
     }
 
     fun save(track: NowPlayingReceiver.NowPlayingTrack) {
-        Realm.getDefaultInstance().runAndClose {
-            val transaction = PlaylistTransaction(track).apply { save = true }
+        val transaction = PlaylistTransaction(track).apply { save = true }
+
+        val realm = Realm.getDefaultInstance().apply {
+            beginTransaction()
             copyToRealmOrUpdate(transaction)
         }
-        context.toast("1 track saved: ${track.name}")
-        sync()
+
+        Snackbar.make(context.window.decorView.rootView, "SAVED: ${track.name}", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", { realm.cancelTransaction() })
+                .setCallback(object: Snackbar.Callback() {
+                    override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                        super.onDismissed(snackbar, event)
+                        if (event != DISMISS_EVENT_ACTION) {
+                            realm.apply {
+                                commitTransaction()
+                                close()
+                            }
+                        }
+                        sync()
+                    }
+                })
+                .show()
     }
 
     fun remove(track: NowPlayingReceiver.NowPlayingTrack) {
-        Realm.getDefaultInstance().runAndClose {
-            val transaction = PlaylistTransaction(track).apply { remove = true }
+        val transaction = PlaylistTransaction(track).apply { remove = true }
+
+        val realm = Realm.getDefaultInstance().apply {
+            beginTransaction()
             copyToRealmOrUpdate(transaction)
         }
-        context.toast("1 track removed: ${track.name}")
-        sync()
+
+        Snackbar.make(context.window.decorView.rootView, "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", { realm.cancelTransaction() })
+                .setCallback(object: Snackbar.Callback() {
+                    override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                        super.onDismissed(snackbar, event)
+                        if (event != DISMISS_EVENT_ACTION) {
+                            realm.apply {
+                                commitTransaction()
+                                close()
+                            }
+                        } else {
+                            nextTrack(context)
+                        }
+                        sync()
+                    }
+                })
+                .show()
     }
 
     fun sync() {
@@ -80,5 +117,9 @@ class TransactionManager {
 
             spotify.removeTracksFromPlaylist(myId, ppTempId, tracks.map { it.uri })
         }
+    }
+
+    fun nextTrack(context: Context) {
+        context.sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
     }
 }

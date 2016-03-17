@@ -43,7 +43,6 @@ class PlaylistController() {
             return
         }
         transactionManager.remove(track)
-        nextTrack(context)
     }
 
     fun refresh() {
@@ -66,9 +65,5 @@ class PlaylistController() {
                 }
             }
         }
-    }
-
-    fun nextTrack(context: Context) {
-        context.sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
     }
 }
