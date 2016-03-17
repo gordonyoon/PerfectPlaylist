@@ -5,6 +5,8 @@ import com.example.gordonyoon.perfectplaylist.di.HasComponent
 import com.example.gordonyoon.perfectplaylist.di.components.AppComponent
 import com.example.gordonyoon.perfectplaylist.di.components.DaggerAppComponent
 import com.example.gordonyoon.perfectplaylist.di.modules.AppModule
+import com.facebook.stetho.Stetho
+import com.uphyca.stetho_realm.RealmInspectorModulesProvider
 import timber.log.Timber
 import kotlin.reflect.KProperty
 
@@ -17,5 +19,11 @@ class App : Application(), HasComponent<AppComponent> {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
+
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+                        .build());
     }
 }
