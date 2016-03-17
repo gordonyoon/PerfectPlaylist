@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.design.widget.Snackbar
+import com.example.gordonyoon.perfectplaylist.R
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.extensions.*
 import com.example.gordonyoon.perfectplaylist.models.PlaylistTransaction
@@ -33,7 +34,7 @@ class TransactionManager {
             copyToRealmOrUpdate(transaction)
         }
 
-        Snackbar.make(context.window.decorView.rootView, "SAVED: ${track.name}", Snackbar.LENGTH_LONG)
+        Snackbar.make(context.findViewById(R.id.fab), "SAVED: ${track.name}", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", { realm.cancelTransaction() })
                 .setCallback(object: Snackbar.Callback() {
                     override fun onDismissed(snackbar: Snackbar?, event: Int) {
@@ -58,7 +59,7 @@ class TransactionManager {
             copyToRealmOrUpdate(transaction)
         }
 
-        Snackbar.make(context.window.decorView.rootView, "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
+        Snackbar.make(context.findViewById(R.id.fab), "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", { realm.cancelTransaction() })
                 .setCallback(object: Snackbar.Callback() {
                     override fun onDismissed(snackbar: Snackbar?, event: Int) {
@@ -68,7 +69,6 @@ class TransactionManager {
                                 commitTransaction()
                                 close()
                             }
-                        } else {
                             nextTrack(context)
                         }
                         sync()
