@@ -1,6 +1,6 @@
 package com.example.gordonyoon.perfectplaylist.spotify
 
-import com.example.gordonyoon.perfectplaylist.extensions.executeAndClose
+import com.example.gordonyoon.perfectplaylist.extensions.runAndClose
 import com.example.gordonyoon.perfectplaylist.models.PlaylistTransaction
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.ui.OnNowPlayingChangeListener
@@ -19,7 +19,7 @@ class NowPlayingState {
         if (listener != null) {
             (listener as OnNowPlayingChangeListener).updateUi(new.name, new.artist)
 
-            Realm.getDefaultInstance().executeAndClose {
+            Realm.getDefaultInstance().runAndClose {
                 copyToRealmOrUpdate(PlaylistTransaction(new))
             }
 
