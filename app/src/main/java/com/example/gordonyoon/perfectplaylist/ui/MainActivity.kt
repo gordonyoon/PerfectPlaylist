@@ -12,6 +12,7 @@ import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
+import io.realm.Realm
 import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
                 .build()
     }
 
+    @Inject lateinit var realm: Realm
     @Inject lateinit var api: SpotifyApi
     @Inject lateinit var authenticator: Authenticator
     @Inject lateinit var controller: PlaylistController

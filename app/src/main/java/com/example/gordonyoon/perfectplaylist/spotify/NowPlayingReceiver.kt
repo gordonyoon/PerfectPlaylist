@@ -22,7 +22,7 @@ class NowPlayingReceiver : BroadcastReceiver() {
         }
     }
 
-    data class NowPlayingTrack(val uri: String = "", val artist: String = "", val album: String = "", val name: String = "", val length: Int = -1) {
+    data class NowPlayingTrack(val uri: String = "", val artist: String = "", val album: String = "", val name: String = "", val length: Int = 0) {
 
         constructor(intent: Intent): this(
                 intent.getStringExtra("id"),
