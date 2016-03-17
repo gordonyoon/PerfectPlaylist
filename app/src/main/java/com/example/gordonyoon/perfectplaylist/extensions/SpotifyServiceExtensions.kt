@@ -37,18 +37,6 @@ fun SpotifyService.getNewTracks(myId: String, ppTempId: String, latestAdd: Date)
     return newTracks
 }
 
-fun SpotifyService.playlistContainsTrack(ownerId: String, playlistId: String, trackUri: String): Boolean {
-    throwIfOnMainThread()
-    val foundTrack = findPlaylistTrack(ownerId, playlistId, trackUri) ?: return false
-    Timber.d("Found track: ${foundTrack.name}")
-    return true;
-}
-
-fun SpotifyService.findPlaylistTrack(ownerId: String, playlistId: String, trackUri: String): Track? {
-    throwIfOnMainThread()
-    return getAllPlaylistTracks(ownerId, playlistId).find { it.uri == trackUri }
-}
-
 fun PlaylistBase.getTracks(spotify: SpotifyService, newestAdd: Date = Date(0)): List<Track> {
     throwIfOnMainThread()
     return spotify.getAllPlaylistTracks(owner.id, id, newestAdd)
@@ -79,32 +67,43 @@ fun List<Track>.filterSavedTracks(spotify: SpotifyService): List<Track> {
     return newMinusSavedTracks
 }
 
-fun SpotifyService.addTrackToPlaylist(userId: String, playlistId: String, trackUri: String): Unit {
+fun SpotifyService.addDistinctTracksToPlaylist(userId: String, playlistId: String, trackUris: List<String>): Unit {
     throwIfOnMainThread()
-    addTracksToPlaylist(userId, playlistId, null, mapOf("uris" to listOf(trackUri)))
+    if (trackUris.isEmpty()) return
+    val alreadyExist: List<String> = getAllPlaylistTracks(userId, playlistId).map { it.uri }
+    val distinctTracks: List<String> = trackUris.subtract(alreadyExist).toList()
+
+    addTracksToPlaylist(userId, playlistId, distinctTracks)
 }
 
-fun SpotifyService.addTrackToPlaylist(userId: String, playlistId: String, track: Track): Unit {
+fun SpotifyService.addTracksToPlaylist(userId: String, playlistId: String, trackUris: List<String>): Unit {
     throwIfOnMainThread()
-    addTracksToPlaylist(userId, playlistId, listOf(track))
-}
-
-fun SpotifyService.addTracksToPlaylist(userId: String, playlistId: String, tracks: List<Track>): Unit {
-    throwIfOnMainThread()
-    if (tracks.isEmpty()) return
+    if (trackUris.isEmpty()) return
     val ITEM_LIMIT = 100
-    tracks.split(ITEM_LIMIT).map {
-        val trackUris = it.map { it.uri }
-        addTracksToPlaylist(userId, playlistId, null, mapOf("uris" to trackUris))
+    trackUris.split(ITEM_LIMIT).map {
+        addTracksToPlaylist(userId, playlistId, null, mapOf("uris" to it))
     }
 }
 
-fun SpotifyService.removeTrackFromPlaylist(userId: String, playlistId: String, trackUri: String): Unit {
+fun SpotifyService.addTracksToMyLibrary(ids: List<String>): Unit {
     throwIfOnMainThread()
-    val trackToRemove  = TrackToRemove().apply { this.uri = trackUri }
-    val tracksToRemove = TracksToRemove().apply { tracks = listOf(trackToRemove) }
+    if (ids.isEmpty()) return
+    val ITEM_LIMIT = 50
+    ids.split(ITEM_LIMIT).map {
+        val idsAsString = it.joinToString(separator = ",")
+        addToMySavedTracks(idsAsString)
+    }
+}
 
-    removeTracksFromPlaylist(userId, playlistId, tracksToRemove)
+fun SpotifyService.removeTracksFromPlaylist(userId: String, playlistId: String, trackUris: List<String>): Unit {
+    throwIfOnMainThread()
+    val ITEM_LIMIT = 100
+    trackUris.split(ITEM_LIMIT).map {
+        val tracks = trackUris.map { TrackToRemove().apply { uri = it } }
+        val tracksToRemove = TracksToRemove().apply { this.tracks = tracks }
+
+        removeTracksFromPlaylist(userId, playlistId, tracksToRemove)
+    }
 }
 
 fun <E> List<E>.split(increment: Int = 1): List<List<E>> {

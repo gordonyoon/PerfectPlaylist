@@ -22,4 +22,8 @@ open class PlaylistTransaction(
         this.name   = track.name
         this.length = track.length
     }
+
+    fun toNowPlayingTrack(): NowPlayingReceiver.NowPlayingTrack {
+        return NowPlayingReceiver.NowPlayingTrack(uri, artist, album, name, length)
+    }
 }

@@ -4,7 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
-import com.example.gordonyoon.perfectplaylist.extensions.*
+import com.example.gordonyoon.perfectplaylist.extensions.addTracksToPlaylist
+import com.example.gordonyoon.perfectplaylist.extensions.getLatestAddDate
+import com.example.gordonyoon.perfectplaylist.extensions.getNewTracks
+import com.example.gordonyoon.perfectplaylist.extensions.getPpTempId
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import kaaes.spotify.webapi.android.SpotifyApi
 import org.jetbrains.anko.async
@@ -16,12 +19,14 @@ import javax.inject.Inject
 class PlaylistController() {
 
     lateinit var context: Activity
-
-    @Inject lateinit var api: SpotifyApi
+    lateinit var api: SpotifyApi
+    lateinit var transactionManager: TransactionManager
 
     @Inject
-    constructor(context: Activity) : this() {
+    constructor(context: Activity, api: SpotifyApi, transactionManager: TransactionManager) : this() {
         this.context = context
+        this.api = api
+        this.transactionManager = transactionManager
     }
 
     fun nowPlayingSave(track: NowPlayingReceiver.NowPlayingTrack) {
@@ -29,33 +34,7 @@ class PlaylistController() {
             context.toast("Play a song!")
             return
         }
-
-        val spotify = api.service
-        async() {
-            val myId      = spotify.me.id
-            val ppTempId  = spotify.getPpTempId(myId)
-            val ppFinalId = spotify.getPpFinalId(myId)
-
-            val uri = track.uri
-            val id  = uri.removePrefix("spotify:track:")
-
-            spotify.addToMySavedTracks(id)
-            spotify.removeTrackFromPlaylist(myId, ppTempId, uri)
-
-            var didSave = false
-            if (!spotify.playlistContainsTrack(myId, ppFinalId, uri)) {
-                spotify.addTrackToPlaylist(myId, ppFinalId, uri)
-                didSave = true
-            }
-
-            uiThread {
-                if (didSave) {
-                    context.toast("1 track saved: ${track.name}")
-                } else {
-                    context.toast("${track.name} is already saved!")
-                }
-            }
-        }
+        transactionManager.save(track)
     }
 
     fun nowPlayingDelete(track: NowPlayingReceiver.NowPlayingTrack) {
@@ -63,19 +42,8 @@ class PlaylistController() {
             context.toast("Play a song!")
             return
         }
-
-        val spotify = api.service
-        async() {
-            val myId     = spotify.me.id
-            val ppTempId = spotify.getPpTempId(myId)
-
-            spotify.removeTrackFromPlaylist(myId, ppTempId, track.uri)
-            nextTrack(context)
-
-            uiThread {
-                context.toast("1 track removed: ${track.name}")
-            }
-        }
+        transactionManager.remove(track)
+        nextTrack(context)
     }
 
     fun refresh() {
@@ -87,7 +55,7 @@ class PlaylistController() {
             val tracks        = spotify.getNewTracks(myId, ppTempId, latestAddDate)
 
             if (!tracks.isEmpty()) {
-                spotify.addTracksToPlaylist(myId, ppTempId, tracks)
+                spotify.addTracksToPlaylist(myId, ppTempId, tracks.map { it.uri })
             }
 
             uiThread {
