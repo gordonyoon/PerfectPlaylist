@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
 class App : Application(), HasComponent<AppComponent> {
 
     override val component: AppComponent by lazy {
-        DaggerAppComponent.builder().appModule(AppModule()).build()
+        DaggerAppComponent.builder().appModule(AppModule(App@this)).build()
     }
 
     override fun onCreate() {

@@ -1,5 +1,6 @@
 package com.example.gordonyoon.perfectplaylist.di.components
 
+import com.example.gordonyoon.perfectplaylist.App
 import com.example.gordonyoon.perfectplaylist.di.modules.AppModule
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
@@ -13,6 +14,7 @@ interface AppComponent {
 
     fun inject(nowPlayingReceiver: NowPlayingReceiver)
 
+    fun app(): App
     fun rxBus(): RxBus
     fun nowPlayingState(): NowPlayingState
 }
