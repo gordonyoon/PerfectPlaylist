@@ -36,7 +36,7 @@ class TransactionManager {
 
         Snackbar.make(context.findViewById(R.id.fab), "SAVED: ${track.name}", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", { reverseCommit(track) })
-                .setOnDismissedCallback(noAction = { sync() })
+                .setOnDismissedNoActionCallback { sync() }
                 .show()
     }
 
@@ -44,16 +44,14 @@ class TransactionManager {
         Realm.getDefaultInstance().tryCommitClose {
             val transaction = PlaylistTransaction(track).apply { remove = true }
             copyToRealmOrUpdate(transaction)
-
-            Snackbar.make(context.findViewById(R.id.fab), "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO", { reverseCommit(track) })
-                    .setOnDismissedCallback(
-                            onDismissed = { nextTrack(context) },
-                            noAction = { sync() }
-                    )
-                    .show()
         }
 
+        Snackbar.make(context.findViewById(R.id.fab), "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", { reverseCommit(track) })
+                .setOnDismissedNoActionCallback { sync() }
+                .show()
+
+        nextTrack(context)
     }
 
     private fun reverseCommit(track: NowPlayingTrack) {
