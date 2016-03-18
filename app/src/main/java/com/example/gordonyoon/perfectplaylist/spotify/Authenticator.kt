@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.App
 import com.example.gordonyoon.perfectplaylist.R
+import com.example.gordonyoon.perfectplaylist.extensions.hasInternetConnection
 import com.example.gordonyoon.perfectplaylist.spotify.constants.Scopes
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.ERROR
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.TOKEN
+import org.jetbrains.anko.toast
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,6 +32,11 @@ class Authenticator() {
     private val REQUEST_CODE: Int by lazy { context.resources.getInteger(R.integer.request_code) }
 
     fun login(callbackActivity: Activity) {
+        if (!context.hasInternetConnection()) {
+            context.toast("No internet connection: Authentication failed.")
+            return
+        }
+        
         val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
             setScopes(arrayOf(
                     Scopes.PLAYLIST_READ_PRIVATE,
