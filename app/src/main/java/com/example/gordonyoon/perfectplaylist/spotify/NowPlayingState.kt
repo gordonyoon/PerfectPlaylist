@@ -19,10 +19,12 @@ class NowPlayingState {
     }
 
     lateinit var bus: RxBus
+    lateinit var widgetController: SpotifyWidgetController
 
     @Inject
-    constructor(bus: RxBus) {
+    constructor(bus: RxBus, widgetController: SpotifyWidgetController) {
         this.bus = bus
+        this.widgetController = widgetController
 
         bus.toObserverable().subscribe {
             if (it is NowPlayingReceiver.NowPlayingTrack) {
@@ -35,6 +37,9 @@ class NowPlayingState {
         this.listener = listener
         if (!nowPlaying.isEmpty()) {
             (this.listener as OnNowPlayingChangeListener).updateUi(nowPlaying.name, nowPlaying.artist)
+        } else {
+            widgetController.nextTrack()
+            widgetController.prevTrack()
         }
     }
 

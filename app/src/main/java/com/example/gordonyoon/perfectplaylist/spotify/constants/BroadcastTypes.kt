@@ -8,5 +8,5 @@ object BroadcastTypes {
 
     const val SPOTIFY_WIDGET = "com.spotify.mobile.android.ui.widget"
     const val WIDGET_NEXT    = SPOTIFY_WIDGET + ".NEXT"
-    const val WIDGET_PREV    = SPOTIFY_WIDGET + ".PREV"
+    const val WIDGET_PREV    = SPOTIFY_WIDGET + ".PREVIOUS"
 }
