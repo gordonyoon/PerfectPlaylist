@@ -36,7 +36,7 @@ class TransactionManager {
 
         Snackbar.make(context.findViewById(R.id.fab), "SAVED: ${track.name}", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", { reverseCommit(track) })
-                .setOnDismissedNotActionCallback { sync() }
+                .setOnDismissedCallback(noAction = { sync() })
                 .show()
     }
 
@@ -47,10 +47,10 @@ class TransactionManager {
 
             Snackbar.make(context.findViewById(R.id.fab), "REMOVED: ${track.name}", Snackbar.LENGTH_LONG)
                     .setAction("UNDO", { reverseCommit(track) })
-                    .setOnDismissedNotActionCallback {
-                        sync()
-                        nextTrack(context)
-                    }
+                    .setOnDismissedCallback(
+                            onDismissed = { nextTrack(context) },
+                            noAction = { sync() }
+                    )
                     .show()
         }
 
