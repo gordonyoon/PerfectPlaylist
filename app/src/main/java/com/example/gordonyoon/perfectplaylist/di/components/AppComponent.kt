@@ -6,6 +6,7 @@ import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
+import com.example.gordonyoon.perfectplaylist.spotify.SpotifyWidgetController
 import dagger.Component
 import javax.inject.Singleton
 
@@ -19,4 +20,5 @@ interface AppComponent {
     fun rxBus(): RxBus
     fun authenticator(): Authenticator
     fun nowPlayingState(): NowPlayingState
+    fun spotifyWidgetController(): SpotifyWidgetController
 }

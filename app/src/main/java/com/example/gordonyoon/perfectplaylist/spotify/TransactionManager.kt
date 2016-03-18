@@ -21,11 +21,13 @@ class TransactionManager {
 
     lateinit var context: Activity
     lateinit var api: SpotifyApi
+    lateinit var widgetController: SpotifyWidgetController
 
     @Inject
-    constructor(context: Activity, api: SpotifyApi) {
+    constructor(context: Activity, api: SpotifyApi, widgetController: SpotifyWidgetController) {
         this.context = context
         this.api = api
+        this.widgetController = widgetController
     }
 
     fun save(track: NowPlayingTrack) {
@@ -51,7 +53,7 @@ class TransactionManager {
                 .setOnDismissedNoActionCallback { sync() }
                 .show()
 
-        nextTrack(context)
+        widgetController.nextTrack()
     }
 
     private fun reverseCommit(track: NowPlayingTrack) {
@@ -105,9 +107,5 @@ class TransactionManager {
 
             spotify.removeTracksFromPlaylist(myId, ppTempId, tracks.map { it.uri })
         }
-    }
-
-    fun nextTrack(context: Context) {
-        context.sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
     }
 }
