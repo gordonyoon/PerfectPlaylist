@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         component.inject(this)
         initializeUi()
 
-        authenticator.login()
+        if (!authenticator.isLoggedIn()) authenticator.login(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

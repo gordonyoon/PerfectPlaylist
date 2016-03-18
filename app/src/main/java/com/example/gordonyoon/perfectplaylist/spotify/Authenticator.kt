@@ -2,8 +2,8 @@ package com.example.gordonyoon.perfectplaylist.spotify
 
 import android.app.Activity
 import android.content.Intent
+import com.example.gordonyoon.perfectplaylist.App
 import com.example.gordonyoon.perfectplaylist.R
-import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.spotify.constants.Scopes
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
@@ -11,14 +11,17 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.ERROR
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.TOKEN
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@PerActivity
+@Singleton
 class Authenticator() {
 
-    lateinit var context: Activity
+    private var loggedIn = false
+
+    lateinit var context: App
 
     @Inject
-    constructor(context: Activity) : this() {
+    constructor(context: App) : this() {
         this.context = context
     }
 
@@ -26,7 +29,7 @@ class Authenticator() {
     private val REDIRECT_URI: String by lazy { context.resources.getString(R.string.redirect_uri) }
     private val REQUEST_CODE: Int by lazy { context.resources.getInteger(R.integer.request_code) }
 
-    fun login() {
+    fun login(callbackActivity: Activity) {
         val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
             setScopes(arrayOf(
                     Scopes.PLAYLIST_READ_PRIVATE,
@@ -36,7 +39,7 @@ class Authenticator() {
                     Scopes.USER_LIBRARY_READ))
         }.build()
 
-        AuthenticationClient.openLoginActivity(context, REQUEST_CODE, request)
+        AuthenticationClient.openLoginActivity(callbackActivity, REQUEST_CODE, request)
     }
 
     /**
@@ -50,13 +53,19 @@ class Authenticator() {
                 TOKEN -> {
                     Timber.d("access token: ${response.accessToken}")
 
+                    loggedIn = true
                     return response.accessToken
                 }
                 ERROR -> {
                     Timber.d("error response: ${response.error}")
+                    loggedIn = false
                 }
             }
         }
         return null
+    }
+
+    fun isLoggedIn(): Boolean {
+        return loggedIn
     }
 }

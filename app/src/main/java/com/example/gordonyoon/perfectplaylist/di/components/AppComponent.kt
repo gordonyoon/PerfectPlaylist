@@ -3,6 +3,7 @@ package com.example.gordonyoon.perfectplaylist.di.components
 import com.example.gordonyoon.perfectplaylist.App
 import com.example.gordonyoon.perfectplaylist.di.modules.AppModule
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
+import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import dagger.Component
@@ -16,5 +17,6 @@ interface AppComponent {
 
     fun app(): App
     fun rxBus(): RxBus
+    fun authenticator(): Authenticator
     fun nowPlayingState(): NowPlayingState
 }
