@@ -26,14 +26,8 @@ class SpotifyWidgetController {
         context.sendBroadcast(Intent(BroadcastTypes.WIDGET_PREV))
     }
 
-    /**
-     * Dual purpose:
-     * 1. force Spotify to emit information on the currently playing track
-     * 2. start the Spotify app if it isn't already running
-     */
-    fun ping() {
-        nextTrack()
-        prevTrack()
+    fun playTrack() {
+        context.sendBroadcast(Intent(BroadcastTypes.WIDGET_PLAY))
     }
 
     fun isRunning(): Boolean {
