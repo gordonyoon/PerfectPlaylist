@@ -33,7 +33,8 @@ class TransactionManager {
 
     fun save(track: NowPlayingTrack) {
         if (!widgetController.isRunning()) {
-            context.toast("Spotify is not running!")
+            context.toast("Spotify is not running; please try again in a moment.")
+            widgetController.ping()
             return
         }
 
@@ -50,7 +51,8 @@ class TransactionManager {
 
     fun remove(track: NowPlayingTrack) {
         if (!widgetController.isRunning()) {
-            context.toast("Spotify is not running!")
+            context.toast("Spotify is not running; please try again in a moment.")
+            widgetController.ping()
             return
         }
 

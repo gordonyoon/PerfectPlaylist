@@ -38,8 +38,7 @@ class NowPlayingState {
         if (!nowPlaying.isEmpty()) {
             (this.listener as OnNowPlayingChangeListener).updateUi(nowPlaying.name, nowPlaying.artist)
         } else {
-            widgetController.nextTrack()
-            widgetController.prevTrack()
+            widgetController.ping()
         }
     }
 
