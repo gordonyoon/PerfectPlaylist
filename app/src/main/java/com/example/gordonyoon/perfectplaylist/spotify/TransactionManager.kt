@@ -14,6 +14,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import kaaes.spotify.webapi.android.SpotifyApi
 import org.jetbrains.anko.async
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 @PerActivity
@@ -31,6 +32,11 @@ class TransactionManager {
     }
 
     fun save(track: NowPlayingTrack) {
+        if (!widgetController.isRunning()) {
+            context.toast("Spotify is not running!")
+            return
+        }
+
         Realm.getDefaultInstance().tryCommitClose {
             val transaction = PlaylistTransaction(track).apply { save = true }
             copyToRealmOrUpdate(transaction)
@@ -43,6 +49,11 @@ class TransactionManager {
     }
 
     fun remove(track: NowPlayingTrack) {
+        if (!widgetController.isRunning()) {
+            context.toast("Spotify is not running!")
+            return
+        }
+
         Realm.getDefaultInstance().tryCommitClose {
             val transaction = PlaylistTransaction(track).apply { remove = true }
             copyToRealmOrUpdate(transaction)

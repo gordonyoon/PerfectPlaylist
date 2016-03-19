@@ -1,5 +1,7 @@
 package com.example.gordonyoon.perfectplaylist.spotify
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.App
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
@@ -22,5 +24,12 @@ class SpotifyWidgetController {
 
     fun prevTrack() {
         context.sendBroadcast(Intent(BroadcastTypes.WIDGET_PREV))
+    }
+
+    fun isRunning(): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val spotify = activityManager.getRunningServices(Integer.MAX_VALUE)
+                .find { it.process == BroadcastTypes.SPOTIFY_PACKAGE }
+        return spotify != null
     }
 }
