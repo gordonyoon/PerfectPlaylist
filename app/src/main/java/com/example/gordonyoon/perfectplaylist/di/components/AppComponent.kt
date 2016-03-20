@@ -8,6 +8,7 @@ import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.SpotifyWidgetController
 import dagger.Component
+import kaaes.spotify.webapi.android.SpotifyApi
 import javax.inject.Singleton
 
 @Singleton
@@ -18,6 +19,7 @@ interface AppComponent {
 
     fun app(): App
     fun rxBus(): RxBus
+    fun spotifyApi(): SpotifyApi
     fun authenticator(): Authenticator
     fun nowPlayingState(): NowPlayingState
     fun spotifyWidgetController(): SpotifyWidgetController

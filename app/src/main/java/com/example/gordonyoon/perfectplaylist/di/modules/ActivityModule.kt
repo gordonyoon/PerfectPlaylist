@@ -12,8 +12,4 @@ class ActivityModule(val activity: Activity) {
     @Provides
     @PerActivity
     fun provideActivity(): Activity = activity
-
-    @Provides
-    @PerActivity
-    fun provideSpotifyApi(): SpotifyApi = SpotifyApi()
 }

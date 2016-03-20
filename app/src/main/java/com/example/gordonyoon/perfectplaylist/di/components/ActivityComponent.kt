@@ -14,5 +14,4 @@ interface ActivityComponent {
     fun inject(mainActivity: MainActivity)
 
     fun activity(): Activity
-    fun spotifyApi(): SpotifyApi
 }
