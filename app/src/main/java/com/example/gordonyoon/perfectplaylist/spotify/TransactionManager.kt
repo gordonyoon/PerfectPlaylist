@@ -22,12 +22,14 @@ class TransactionManager {
 
     lateinit var context: Activity
     lateinit var api: SpotifyApi
+    lateinit var authenticator: Authenticator
     lateinit var widgetController: SpotifyWidgetController
 
     @Inject
-    constructor(context: Activity, api: SpotifyApi, widgetController: SpotifyWidgetController) {
+    constructor(context: Activity, api: SpotifyApi, authenticator: Authenticator, widgetController: SpotifyWidgetController) {
         this.context = context
         this.api = api
+        this.authenticator = authenticator
         this.widgetController = widgetController
     }
 
@@ -81,15 +83,18 @@ class TransactionManager {
     }
 
     fun sync() {
-        if (context.hasInternetConnection()) {
-            val transactions = Realm.getDefaultInstance().where(PlaylistTransaction::class.java).findAll()
-            val (save, remove) = transactions.partition { it.save.xor(it.remove) && it.save }
-            saveBatch(save.map { it.toNowPlayingTrack() })
-            removeBatch(remove.map { it.toNowPlayingTrack() })
-            Realm.getDefaultInstance().tryCommitClose {
-                clear(PlaylistTransaction::class.java)
-            }
-        }
+        if (!context.hasInternetConnection()) return
+
+        authenticator.authorizedApiCall(
+                authorized = {
+                    val transactions = Realm.getDefaultInstance().where(PlaylistTransaction::class.java).findAll()
+                    val (save, remove) = transactions.partition { it.save.xor(it.remove) && it.save }
+                    saveBatch(save.map { it.toNowPlayingTrack() })
+                    removeBatch(remove.map { it.toNowPlayingTrack() })
+                    Realm.getDefaultInstance().tryCommitClose {
+                        clear(PlaylistTransaction::class.java)
+                    }
+                })
     }
 
     private fun saveBatch(tracks: List<NowPlayingTrack>) {

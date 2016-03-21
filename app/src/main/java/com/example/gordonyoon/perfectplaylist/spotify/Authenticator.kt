@@ -45,18 +45,19 @@ class Authenticator() {
             return
         }
 
-        verifiedLogin(callbackActivity) {
-            val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
-                setScopes(arrayOf(
-                        Scopes.PLAYLIST_READ_PRIVATE,
-                        Scopes.PLAYLIST_MODIFY_PRIVATE,
-                        Scopes.PLAYLIST_MODIFY_PUBLIC,
-                        Scopes.USER_LIBRARY_MODIFY,
-                        Scopes.USER_LIBRARY_READ))
-            }.build()
+        authorizedApiCall(
+                unauthorized = {
+                    val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
+                        setScopes(arrayOf(
+                                Scopes.PLAYLIST_READ_PRIVATE,
+                                Scopes.PLAYLIST_MODIFY_PRIVATE,
+                                Scopes.PLAYLIST_MODIFY_PUBLIC,
+                                Scopes.USER_LIBRARY_MODIFY,
+                                Scopes.USER_LIBRARY_READ))
+                    }.build()
 
-            AuthenticationClient.openLoginActivity(callbackActivity, REQUEST_CODE, request)
-        }
+                    AuthenticationClient.openLoginActivity(callbackActivity, REQUEST_CODE, request)
+                })
     }
 
     /**
@@ -79,16 +80,15 @@ class Authenticator() {
         }
     }
 
-    fun verifiedLogin(callbackActivity: Activity, login: (Activity) -> Unit) {
+    fun authorizedApiCall(authorized: (() -> Unit)? = null, unauthorized: (() -> Unit)? = null) {
         api.service.getMe(object: Callback<UserPrivate> {
             override fun success(t: UserPrivate?, response: Response?) {
-                Timber.d("Logged in!")
+                authorized?.invoke()
             }
 
             override fun failure(error: RetrofitError?) {
-                login(callbackActivity)
+                unauthorized?.invoke()
             }
-
         })
     }
 }
