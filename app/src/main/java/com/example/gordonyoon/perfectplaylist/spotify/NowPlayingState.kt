@@ -1,6 +1,7 @@
 package com.example.gordonyoon.perfectplaylist.spotify
 
 import com.example.gordonyoon.perfectplaylist.rx.RxBus
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingReceiver.NowPlayingTrack
 import com.example.gordonyoon.perfectplaylist.ui.OnNowPlayingChangeListener
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,17 +10,17 @@ import kotlin.properties.Delegates
 @Singleton
 class NowPlayingState {
 
-    var listener: OnNowPlayingChangeListener? = null
-
-    var nowPlaying: NowPlayingReceiver.NowPlayingTrack by Delegates.observable(NowPlayingReceiver.NowPlayingTrack()) {
-        prop, old, new ->
-        if (listener != null) {
-            (listener as OnNowPlayingChangeListener).updateUi(new.name, new.artist)
-        }
-    }
-
     lateinit var bus: RxBus
     lateinit var widgetController: SpotifyWidgetController
+
+    var listener: OnNowPlayingChangeListener? = null
+
+    var nowPlaying: NowPlayingTrack by Delegates.observable(NowPlayingTrack()) {
+        prop, old, new ->
+        if (listener != null) {
+            listener?.updateUi(new.name, new.artist)
+        }
+    }
 
     @Inject
     constructor(bus: RxBus, widgetController: SpotifyWidgetController) {
@@ -27,7 +28,7 @@ class NowPlayingState {
         this.widgetController = widgetController
 
         bus.toObserverable().subscribe {
-            if (it is NowPlayingReceiver.NowPlayingTrack) {
+            if (it is NowPlayingTrack) {
                 nowPlaying = it
             }
         }
@@ -36,7 +37,7 @@ class NowPlayingState {
     fun register(listener: OnNowPlayingChangeListener) {
         this.listener = listener
         if (!nowPlaying.isEmpty()) {
-            (this.listener as OnNowPlayingChangeListener).updateUi(nowPlaying.name, nowPlaying.artist)
+            listener.updateUi(nowPlaying.name, nowPlaying.artist)
         } else {
             widgetController.ping()
         }
