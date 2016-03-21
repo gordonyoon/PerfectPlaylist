@@ -11,6 +11,7 @@ import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
 import com.example.gordonyoon.perfectplaylist.extensions.getAppContext
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState.OnNowPlayingChangeListener
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -73,8 +74,18 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     override fun updateUi(trackTitle: String, artistName: String) {
         this.artistName.text = artistName
         this.trackTitle.text = trackTitle
-
         this.trackTitle.isSelected = false
+        nowPlayingStart()
+    }
+
+    override fun nowPlayingExpire() {
+        this.artistName.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+        this.trackTitle.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+    }
+
+    override fun nowPlayingStart() {
+        this.artistName.setTextColor(resources.getColor(android.R.color.black))
+        this.trackTitle.setTextColor(resources.getColor(android.R.color.black))
     }
 }
 
