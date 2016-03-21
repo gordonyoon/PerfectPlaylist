@@ -13,6 +13,7 @@ import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState.OnNowPlayingChangeListener
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
+import com.example.gordonyoon.perfectplaylist.spotify.SpotifyWidgetController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.onClick
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     @Inject lateinit var authenticator: Authenticator
     @Inject lateinit var controller: PlaylistController
     @Inject lateinit var nowPlayingState: NowPlayingState
+    @Inject lateinit var widgetController: SpotifyWidgetController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
 
         trackTitle.apply {
             isSelected = false
-            onClick { isSelected = !isSelected }
+            onClick { widgetController.ping() }
         }
 
         fab.setOnClickListener    { controller.refresh() }
@@ -74,7 +76,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     override fun updateUi(trackTitle: String, artistName: String) {
         this.artistName.text = artistName
         this.trackTitle.text = trackTitle
-        this.trackTitle.isSelected = false
+        this.trackTitle.isSelected = true
         nowPlayingStart()
     }
 
