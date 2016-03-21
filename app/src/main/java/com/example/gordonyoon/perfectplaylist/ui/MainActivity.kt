@@ -12,11 +12,9 @@ import com.example.gordonyoon.perfectplaylist.extensions.getAppContext
 import com.example.gordonyoon.perfectplaylist.spotify.Authenticator
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
-import kaaes.spotify.webapi.android.SpotifyApi
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.onClick
-import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasComponent<ActivityComponent> {
@@ -28,7 +26,6 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
                 .build()
     }
 
-    @Inject lateinit var api: SpotifyApi
     @Inject lateinit var authenticator: Authenticator
     @Inject lateinit var controller: PlaylistController
     @Inject lateinit var nowPlayingState: NowPlayingState
@@ -37,20 +34,16 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         super.onCreate(savedInstanceState)
         component.inject(this)
         initializeUi()
-
-        if (!authenticator.isLoggedIn()) authenticator.login(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
+        authenticator.setAccessToken(requestCode, resultCode, intent)
+    }
 
-        // TODO: refresh access token when it expires
-        val accessToken: String? = authenticator.getAccessToken(requestCode, resultCode, intent)
-        if (accessToken == null) {
-            toast("Unsuccessful authentication")
-        } else {
-            api.setAccessToken(accessToken)
-        }
+    override fun onResume() {
+        super.onResume()
+        authenticator.login(this)
     }
 
     override fun onStart() {

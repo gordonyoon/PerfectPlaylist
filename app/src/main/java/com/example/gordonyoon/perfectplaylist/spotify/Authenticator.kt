@@ -10,7 +10,15 @@ import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.ERROR
 import com.spotify.sdk.android.authentication.AuthenticationResponse.Type.TOKEN
+import kaaes.spotify.webapi.android.SpotifyApi
+import kaaes.spotify.webapi.android.SpotifyCallback
+import kaaes.spotify.webapi.android.models.UserPrivate
+import org.jetbrains.anko.async
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import retrofit.Callback
+import retrofit.RetrofitError
+import retrofit.client.Response
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,13 +26,13 @@ import javax.inject.Singleton
 @Singleton
 class Authenticator() {
 
-    private var loggedIn = false
-
     lateinit var context: App
+    lateinit var api: SpotifyApi
 
     @Inject
-    constructor(context: App) : this() {
+    constructor(context: App, api: SpotifyApi) : this() {
         this.context = context
+        this.api = api
     }
 
     private val CLIENT_ID: String by lazy { context.resources.getString(R.string.client_id) }
@@ -36,43 +44,51 @@ class Authenticator() {
             context.toast("No internet connection: Authentication failed.")
             return
         }
-        
-        val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
-            setScopes(arrayOf(
-                    Scopes.PLAYLIST_READ_PRIVATE,
-                    Scopes.PLAYLIST_MODIFY_PRIVATE,
-                    Scopes.PLAYLIST_MODIFY_PUBLIC,
-                    Scopes.USER_LIBRARY_MODIFY,
-                    Scopes.USER_LIBRARY_READ))
-        }.build()
 
-        AuthenticationClient.openLoginActivity(callbackActivity, REQUEST_CODE, request)
+        verifiedLogin(callbackActivity) {
+            val request = AuthenticationRequest.Builder(CLIENT_ID, TOKEN, REDIRECT_URI).apply {
+                setScopes(arrayOf(
+                        Scopes.PLAYLIST_READ_PRIVATE,
+                        Scopes.PLAYLIST_MODIFY_PRIVATE,
+                        Scopes.PLAYLIST_MODIFY_PUBLIC,
+                        Scopes.USER_LIBRARY_MODIFY,
+                        Scopes.USER_LIBRARY_READ))
+            }.build()
+
+            AuthenticationClient.openLoginActivity(callbackActivity, REQUEST_CODE, request)
+        }
     }
 
     /**
      * Called in onActivityResult() when AuthenticationClient.openLoginActivity() returns
      */
-    fun getAccessToken(requestCode: Int, resultCode: Int, intent: Intent?): String? {
+    fun setAccessToken(requestCode: Int, resultCode: Int, intent: Intent?) {
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             val response = AuthenticationClient.getResponse(resultCode, intent)
             when (response.type) {
                 TOKEN -> {
                     Timber.d("access token: ${response.accessToken}")
-
-                    loggedIn = true
-                    return response.accessToken
+                    api.setAccessToken(response.accessToken)
                 }
                 ERROR -> {
                     Timber.d("error response: ${response.error}")
-                    loggedIn = false
+                    api.setAccessToken("")  // ensure that no transactions go through
                 }
             }
         }
-        return null
     }
 
-    fun isLoggedIn(): Boolean {
-        return loggedIn
+    fun verifiedLogin(callbackActivity: Activity, login: (Activity) -> Unit) {
+        api.service.getMe(object: Callback<UserPrivate> {
+            override fun success(t: UserPrivate?, response: Response?) {
+                Timber.d("Logged in!")
+            }
+
+            override fun failure(error: RetrofitError?) {
+                login(callbackActivity)
+            }
+
+        })
     }
 }
