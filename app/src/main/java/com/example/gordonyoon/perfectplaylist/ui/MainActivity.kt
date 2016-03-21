@@ -16,7 +16,6 @@ import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import com.example.gordonyoon.perfectplaylist.spotify.SpotifyWidgetController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.jetbrains.anko.onClick
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasComponent<ActivityComponent> {
@@ -32,6 +31,8 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     @Inject lateinit var controller: PlaylistController
     @Inject lateinit var nowPlayingState: NowPlayingState
     @Inject lateinit var widgetController: SpotifyWidgetController
+
+    @Inject lateinit var adapter: TrackPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +63,13 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     fun initializeUi() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        trackPager.adapter = adapter
+        trackPager.currentItem = 1
 
-        trackTitle.apply {
-            isSelected = false
-            onClick { widgetController.ping() }
-        }
+//        trackTitle.apply {
+//            isSelected = false
+//            onClick { widgetController.ping() }
+//        }
 
         fab.setOnClickListener    { controller.refresh() }
         save.setOnClickListener   { controller.nowPlayingSave(nowPlayingState.nowPlaying) }
@@ -74,20 +77,22 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     }
 
     override fun updateUi(trackTitle: String, artistName: String) {
-        this.artistName.text = artistName
-        this.trackTitle.text = trackTitle
-        this.trackTitle.isSelected = true
+        adapter.updateCurrentTrack(trackTitle, artistName)
+
+//        this.artistName.text = artistName
+//        this.trackTitle.text = trackTitle
+//        this.trackTitle.isSelected = true
         nowPlayingStart()
     }
 
     override fun nowPlayingExpire() {
-        this.artistName.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-        this.trackTitle.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+//        this.artistName.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+//        this.trackTitle.setTextColor(resources.getColor(android.R.color.holo_red_dark))
     }
 
     override fun nowPlayingStart() {
-        this.artistName.setTextColor(resources.getColor(android.R.color.black))
-        this.trackTitle.setTextColor(resources.getColor(android.R.color.black))
+//        this.artistName.setTextColor(resources.getColor(android.R.color.black))
+//        this.trackTitle.setTextColor(resources.getColor(android.R.color.black))
     }
 }
 
