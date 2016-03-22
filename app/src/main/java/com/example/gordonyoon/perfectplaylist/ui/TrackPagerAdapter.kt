@@ -11,6 +11,10 @@ import javax.inject.Inject
 @PerActivity
 class TrackPagerAdapter: FragmentPagerAdapter {
 
+    val NUM_PAGES = 2
+    val PAGAE_MAIN = 0
+    val PAGE_EXTRA = 1
+
     private val views = ArrayList<TrackFragment>()
 
     lateinit var activity: Activity
@@ -21,14 +25,14 @@ class TrackPagerAdapter: FragmentPagerAdapter {
         this.activity = activity
         this.fragmentManager = fragmentManager
 
-        for (i in 0..2) views.add(TrackFragment())
+        for (i in 1..NUM_PAGES) views.add(TrackFragment())
     }
 
-    override fun getCount(): Int = 3
+    override fun getCount(): Int = NUM_PAGES
 
     override fun getItem(position: Int): Fragment? = views[position]
 
     fun updateCurrentTrack(trackTitle: String, artistName: String) {
-        views[1].updateTrack(trackTitle, artistName)
+        views[PAGAE_MAIN].updateTrack(trackTitle, artistName)
     }
 }

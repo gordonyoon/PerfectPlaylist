@@ -1,13 +1,13 @@
 package com.example.gordonyoon.perfectplaylist.ui
 
 import android.content.Context
-import android.support.v4.view.ViewPager
 import android.util.AttributeSet
+import com.antonyt.infiniteviewpager.InfiniteViewPager
 
 /**
  * Custom
  */
-class TrackViewPager(context: Context, attributeSet: AttributeSet): ViewPager(context, attributeSet) {
+class TrackViewPager(context: Context, attributeSet: AttributeSet): InfiniteViewPager(context, attributeSet) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var height = 0

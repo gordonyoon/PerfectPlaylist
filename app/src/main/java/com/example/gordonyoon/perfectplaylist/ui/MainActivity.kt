@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         trackPager.adapter = adapter
-        trackPager.currentItem = 1
 
 //        trackTitle.apply {
 //            isSelected = false
