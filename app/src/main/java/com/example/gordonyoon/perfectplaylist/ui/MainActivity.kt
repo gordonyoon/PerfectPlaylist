@@ -14,7 +14,7 @@ import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState
 import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState.OnNowPlayingChangeListener
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import com.example.gordonyoon.perfectplaylist.spotify.SpotifyWidgetController
-import com.example.gordonyoon.perfectplaylist.ui.viewpager.InfinitePagerAdapterWrapper
+import com.example.gordonyoon.perfectplaylist.ui.viewpager.adapter.InfinitePagerAdapterWrapper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import javax.inject.Inject

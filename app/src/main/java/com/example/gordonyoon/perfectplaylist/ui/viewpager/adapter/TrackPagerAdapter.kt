@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.ui.viewpager
+package com.example.gordonyoon.perfectplaylist.ui.viewpager.adapter
 
 import android.app.Activity
 import android.support.v4.app.FragmentManager

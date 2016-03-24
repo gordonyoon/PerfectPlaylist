@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v4.view.PagerAdapter
 import android.util.AttributeSet
 import com.antonyt.infiniteviewpager.InfiniteViewPager
+import com.example.gordonyoon.perfectplaylist.ui.viewpager.adapter.InfinitePagerAdapterWrapper
 
 /**
  * Custom

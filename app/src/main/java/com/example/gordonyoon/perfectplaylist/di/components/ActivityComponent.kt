@@ -5,8 +5,8 @@ import android.support.v4.app.FragmentManager
 import com.example.gordonyoon.perfectplaylist.di.modules.ActivityModule
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
 import com.example.gordonyoon.perfectplaylist.ui.MainActivity
-import com.example.gordonyoon.perfectplaylist.ui.viewpager.InfinitePagerAdapterWrapper
-import com.example.gordonyoon.perfectplaylist.ui.viewpager.TrackPagerAdapter
+import com.example.gordonyoon.perfectplaylist.ui.viewpager.adapter.InfinitePagerAdapterWrapper
+import com.example.gordonyoon.perfectplaylist.ui.viewpager.adapter.TrackPagerAdapter
 import dagger.Component
 
 @PerActivity

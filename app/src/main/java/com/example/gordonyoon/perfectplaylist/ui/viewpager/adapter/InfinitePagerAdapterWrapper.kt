@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.ui.viewpager
+package com.example.gordonyoon.perfectplaylist.ui.viewpager.adapter
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter
 import com.example.gordonyoon.perfectplaylist.di.scopes.PerActivity
