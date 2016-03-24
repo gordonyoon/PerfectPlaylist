@@ -1,11 +1,12 @@
 package com.example.gordonyoon.perfectplaylist.ui.viewpager
 
 import android.content.Context
+import android.support.v4.view.PagerAdapter
 import android.util.AttributeSet
+import timber.log.Timber
 
 class TrackViewPager(context: Context, attributeSet: AttributeSet): BaseInfiniteViewPager(context, attributeSet) {
 
-    var internallyPaging: Boolean = false
     var previousPosition: Int = Integer.MIN_VALUE
 
     fun updateTrack(trackTitle: String, artistName: String) {
@@ -15,26 +16,22 @@ class TrackViewPager(context: Context, attributeSet: AttributeSet): BaseInfinite
     fun setOnPageChanged(onPageLeft: () -> Unit, onPageRight: () -> Unit) {
         addOnPageChangeListener(object: SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                if (!internallyPaging) {
-                    if (position > previousPosition) {
-                        onPageRight()
-                    } else if (position in (Integer.MIN_VALUE + 1)..(previousPosition - 1)) {
-                        onPageLeft()
-                    }
+                if (previousPosition == Integer.MIN_VALUE) {
+                    previousPosition = getDefaultPosition()
+                }
+
+                if (position > previousPosition) {
+                    onPageRight()
+                } else if (position in (Integer.MIN_VALUE + 1)..(previousPosition - 1)) {
+                    onPageLeft()
                 }
                 previousPosition = position
-                internallyPaging = false
             }
         })
     }
 
-    fun pageLeft() {
-        internallyPaging = true
-        setCurrentItem(currentItem - 1, true)
-    }
-
-    fun pageRight() {
-        internallyPaging = true
-        setCurrentItem(currentItem + 1, true)
+    override fun setAdapter(adapter: PagerAdapter?) {
+        super.setAdapter(adapter)
+        previousPosition = getAdapter()?.realCount?.times(100) ?: 0
     }
 }

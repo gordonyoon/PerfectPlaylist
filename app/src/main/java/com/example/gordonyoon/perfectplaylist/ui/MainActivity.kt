@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     @Inject lateinit var nowPlayingState: NowPlayingState
     @Inject lateinit var widgetController: SpotifyWidgetController
 
-    @Inject lateinit var adapter: InfinitePagerAdapterWrapper
+    @Inject lateinit var pagerAdapter: InfinitePagerAdapterWrapper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +64,16 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     fun initializeUi() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        trackPager.offscreenPageLimit = 3
-        trackPager.adapter = adapter
-        trackPager.setOnPageChanged(
-                onPageLeft = { trackPager.pageRight() },
-                onPageRight = { trackPager.pageLeft() }
-        )
 
-//        trackTitle.apply {
+        trackPager.apply {
+            adapter = pagerAdapter
+            setOnPageChanged(
+                    onPageLeft = { trackPager.updateTrack("LEFT", "LEFT") },
+                    onPageRight = { trackPager.updateTrack("RIGHT", "RIGHT") }
+            )
+        }
+
+        //        trackTitle.apply {
 //            isSelected = false
 //            onClick { widgetController.ping() }
 //        }

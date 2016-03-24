@@ -32,4 +32,13 @@ abstract class BaseInfiniteViewPager(context: Context, attributeSet: AttributeSe
     override fun getAdapter(): InfinitePagerAdapterWrapper? {
         return super.getAdapter() as InfinitePagerAdapterWrapper
     }
+
+    /**
+     * Calculate the default starting position based on internal logic
+     *
+     * @see InfiniteViewPager#getOffsetAmount()
+     */
+    fun getDefaultPosition(): Int {
+        return adapter?.realCount?.times(100) ?: Integer.MIN_VALUE
+    }
 }
