@@ -24,4 +24,14 @@ class TrackFragment(): Fragment() {
         view?.find<TextView>(R.id.trackTitle)?.text = ""
         view?.find<TextView>(R.id.artistName)?.text = ""
     }
+
+    fun setTextExpired() {
+        view?.find<TextView>(R.id.trackTitle)?.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+        view?.find<TextView>(R.id.artistName)?.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+    }
+
+    fun setTextUnexpired() {
+        view?.find<TextView>(R.id.trackTitle)?.setTextColor(resources.getColor(android.R.color.black))
+        view?.find<TextView>(R.id.artistName)?.setTextColor(resources.getColor(android.R.color.black))
+    }
 }

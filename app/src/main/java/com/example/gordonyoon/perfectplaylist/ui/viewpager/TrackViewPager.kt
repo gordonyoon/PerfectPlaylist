@@ -3,9 +3,11 @@ package com.example.gordonyoon.perfectplaylist.ui.viewpager
 import android.content.Context
 import android.support.v4.view.PagerAdapter
 import android.util.AttributeSet
-import timber.log.Timber
+import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState.OnNowPlayingExpiredListener
 
-class TrackViewPager(context: Context, attributeSet: AttributeSet): BaseInfiniteViewPager(context, attributeSet) {
+class TrackViewPager(context: Context,
+                     attributeSet: AttributeSet
+): BaseInfiniteViewPager(context, attributeSet), OnNowPlayingExpiredListener {
 
     var previousPosition: Int = Integer.MIN_VALUE
 
@@ -33,5 +35,13 @@ class TrackViewPager(context: Context, attributeSet: AttributeSet): BaseInfinite
     override fun setAdapter(adapter: PagerAdapter?) {
         super.setAdapter(adapter)
         previousPosition = getAdapter()?.realCount?.times(100) ?: 0
+    }
+
+    override fun expire() {
+        adapter?.expire(currentItem)
+    }
+
+    override fun unexpire() {
+        adapter?.unexpire(currentItem)
     }
 }

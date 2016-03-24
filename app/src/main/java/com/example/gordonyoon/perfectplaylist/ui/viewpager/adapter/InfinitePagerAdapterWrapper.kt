@@ -15,4 +15,12 @@ class InfinitePagerAdapterWrapper: InfinitePagerAdapter {
     fun updateTrack(position: Int, trackTitle: String, artistName: String) {
         adapter.getItem(position).updateTrack(trackTitle, artistName)
     }
+
+    fun expire(position: Int) {
+        adapter.getItem(position).setTextExpired()
+    }
+
+    fun unexpire(position: Int) {
+        adapter.getItem(position).setTextUnexpired()
+    }
 }

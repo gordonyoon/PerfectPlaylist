@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
 
     override fun onStart() {
         super.onStart()
-        nowPlayingState.register(this)
+        nowPlayingState.register(this, trackPager)
     }
 
     override fun onStop() {
@@ -73,11 +73,6 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
             )
         }
 
-        //        trackTitle.apply {
-//            isSelected = false
-//            onClick { widgetController.ping() }
-//        }
-
         fab.setOnClickListener    { controller.refresh() }
         save.setOnClickListener   { controller.nowPlayingSave(nowPlayingState.nowPlaying) }
         delete.setOnClickListener { controller.nowPlayingDelete(nowPlayingState.nowPlaying) }
@@ -85,22 +80,5 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
 
     override fun updateUi(trackTitle: String, artistName: String) {
         trackPager.updateTrack(trackTitle, artistName)
-
-//        this.artistName.text = artistName
-//        this.trackTitle.text = trackTitle
-//        this.trackTitle.isSelected = true
-        nowPlayingStart()
-    }
-
-    override fun nowPlayingExpire() {
-//        this.artistName.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-//        this.trackTitle.setTextColor(resources.getColor(android.R.color.holo_red_dark))
-    }
-
-    override fun nowPlayingStart() {
-//        this.artistName.setTextColor(resources.getColor(android.R.color.black))
-//        this.trackTitle.setTextColor(resources.getColor(android.R.color.black))
     }
 }
-
-

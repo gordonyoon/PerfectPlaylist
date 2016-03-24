@@ -14,23 +14,24 @@ class NowPlayingState {
     lateinit var bus: RxBus
     lateinit var widgetController: SpotifyWidgetController
 
-    private var listener: OnNowPlayingChangeListener? = null
+    private var nowPlayingChangeListener: OnNowPlayingChangeListener? = null
+    private var nowPlayingExpiredListener: OnNowPlayingExpiredListener? = null
     private var timeoutThread: TimeoutThread? = null
     private var timedOut: Boolean = false
 
     var nowPlaying: NowPlayingTrack by Delegates.observable(NowPlayingTrack()) {
         prop, old, new ->
-        listener?.updateUi(new.name, new.artist)
+        nowPlayingChangeListener?.updateUi(new.name, new.artist)
         restartTimeout(new.length)
     }
 
     private fun restartTimeout(time: Int) {
         timedOut = false
-        listener?.nowPlayingStart()
+        nowPlayingExpiredListener?.unexpire()
         timeoutThread?.interrupt()
         timeoutThread = TimeoutThread(time) {
             timedOut = true
-            listener?.nowPlayingExpire()
+            nowPlayingExpiredListener?.expire()
         }
         timeoutThread?.start()
     }
@@ -51,22 +52,26 @@ class NowPlayingState {
         }
     }
 
-    fun register(listener: OnNowPlayingChangeListener) {
-        this.listener = listener
+    fun register(nowPlayingChangeListener: OnNowPlayingChangeListener,
+                 nowPlayingExpiredListener: OnNowPlayingExpiredListener) {
+        this.nowPlayingChangeListener = nowPlayingChangeListener
+        this.nowPlayingExpiredListener = nowPlayingExpiredListener
+
         if (!nowPlaying.isEmpty()) {
-            listener.updateUi(nowPlaying.name, nowPlaying.artist)
+            nowPlayingChangeListener.updateUi(nowPlaying.name, nowPlaying.artist)
         } else {
             widgetController.ping()
         }
 
         if (timedOut)
-            listener.nowPlayingExpire()
+            nowPlayingExpiredListener.expire()
         else
-            listener.nowPlayingStart()
+            nowPlayingExpiredListener.unexpire()
     }
 
     fun unregister() {
-        this.listener = null
+        this.nowPlayingChangeListener = null
+        this.nowPlayingExpiredListener = null
     }
 
     class TimeoutThread(val timeout: Int, val onFinishNoInterrupt: () -> Unit): Thread() {
@@ -89,9 +94,11 @@ class NowPlayingState {
 
     interface OnNowPlayingChangeListener {
         fun updateUi(trackTitle: String, artistName: String)
+    }
 
-        fun nowPlayingExpire()
+    interface OnNowPlayingExpiredListener {
+        fun expire()
 
-        fun nowPlayingStart()
+        fun unexpire()
     }
 }
