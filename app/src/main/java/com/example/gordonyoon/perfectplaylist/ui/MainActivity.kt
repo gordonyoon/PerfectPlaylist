@@ -64,7 +64,12 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     fun initializeUi() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        trackPager.offscreenPageLimit = 3
         trackPager.adapter = adapter
+        trackPager.setOnPageChanged(
+                onPageLeft = { trackPager.pageRight() },
+                onPageRight = { trackPager.pageLeft() }
+        )
 
 //        trackTitle.apply {
 //            isSelected = false
