@@ -1,6 +1,7 @@
 package com.example.gordonyoon.perfectplaylist.ui.viewpager
 
 import android.content.Context
+import android.support.v4.view.PagerAdapter
 import android.util.AttributeSet
 import com.antonyt.infiniteviewpager.InfiniteViewPager
 
@@ -22,4 +23,19 @@ class TrackViewPager(context: Context, attributeSet: AttributeSet): InfiniteView
 //
 //        super.onMeasure(widthMeasureSpec, adjustedHeightMeasureSpec)
 //    }
+
+    override fun setAdapter(adapter: PagerAdapter?) {
+        if (adapter !is InfinitePagerAdapterWrapper) {
+            throw IllegalArgumentException("Adapter must be instance of InfinitePagerAdapterWrapper")
+        }
+        super.setAdapter(adapter)
+    }
+
+    override fun getAdapter(): InfinitePagerAdapterWrapper? {
+        return super.getAdapter() as InfinitePagerAdapterWrapper
+    }
+
+    fun updateTrack(trackTitle: String, artistName: String) {
+        adapter?.updateTrack(currentItem, trackTitle, artistName)
+    }
 }

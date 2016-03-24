@@ -15,7 +15,6 @@ import com.example.gordonyoon.perfectplaylist.spotify.NowPlayingState.OnNowPlayi
 import com.example.gordonyoon.perfectplaylist.spotify.PlaylistController
 import com.example.gordonyoon.perfectplaylist.spotify.SpotifyWidgetController
 import com.example.gordonyoon.perfectplaylist.ui.viewpager.InfinitePagerAdapterWrapper
-import com.example.gordonyoon.perfectplaylist.ui.viewpager.TrackPagerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import javax.inject.Inject
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
     }
 
     override fun updateUi(trackTitle: String, artistName: String) {
-        adapter.updateTrack(trackTitle, artistName)
+        trackPager.updateTrack(trackTitle, artistName)
 
 //        this.artistName.text = artistName
 //        this.trackTitle.text = trackTitle
