@@ -10,9 +10,7 @@ import javax.inject.Inject
 @PerActivity
 class TrackPagerAdapter : FragmentPagerAdapter {
 
-    val NUM_PAGES = 4
-    val PAGE_MAIN = 0
-    val PAGE_EXTRA = 1
+    val NUM_PAGES = 4  // required for the InfinitePagerAdapter
 
     lateinit var activity: Activity
     lateinit var fragmentManager: FragmentManager
@@ -32,4 +30,6 @@ class TrackPagerAdapter : FragmentPagerAdapter {
     override fun getCount(): Int = NUM_PAGES
 
     override fun getItem(position: Int): TrackFragment = trackFragments[position]
+
+    fun clear() = trackFragments.map { it.clear() }
 }
