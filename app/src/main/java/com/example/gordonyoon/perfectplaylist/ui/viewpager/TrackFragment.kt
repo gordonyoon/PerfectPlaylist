@@ -1,4 +1,4 @@
-package com.example.gordonyoon.perfectplaylist.ui
+package com.example.gordonyoon.perfectplaylist.ui.viewpager
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.example.gordonyoon.perfectplaylist.R
 import org.jetbrains.anko.find
 
-class TrackFragment: Fragment() {
+class TrackFragment(): Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_track, container, false)
