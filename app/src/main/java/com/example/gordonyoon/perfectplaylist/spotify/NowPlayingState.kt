@@ -54,7 +54,7 @@ class NowPlayingState {
                 }
             } else if (it is SpotifyWidgetController.PreviousTrack) {
                 prevTrackTimeout?.interrupt()
-                prevTrackTimeout = TimeoutThread(500) { widgetController.prevTrack(true) }
+                prevTrackTimeout = TimeoutThread(100) { widgetController.prevTrack(true) }
                 prevTrackTimeout?.start()
             }
         }
@@ -84,12 +84,12 @@ class NowPlayingState {
 
     class TimeoutThread(val timeout: Int, val onFinishNoInterrupt: () -> Unit): Thread() {
 
-        val STEP = 500
+        val STEP_DEFAULT = 4000
 
         override fun run() {
-            for (i in 0..timeout step STEP) {
+            for (i in 0..timeout step Math.min(STEP_DEFAULT, timeout)) {
                 try {
-                    sleep(STEP.toLong())
+                    sleep(Math.min(STEP_DEFAULT, timeout).toLong())
                 } catch (e: InterruptedException) {
                     return
                 }
