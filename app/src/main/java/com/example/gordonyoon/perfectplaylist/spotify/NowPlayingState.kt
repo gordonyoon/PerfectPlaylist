@@ -21,7 +21,9 @@ class NowPlayingState {
 
     var nowPlaying: NowPlayingTrack by Delegates.observable(NowPlayingTrack()) {
         prop, old, new ->
-        nowPlayingChangeListener?.updateUi(new.name, new.artist)
+        if (!new.isEmpty()) {
+            nowPlayingChangeListener?.updateUi(new.name, new.artist)
+        }
         restartTimeout(new.length)
     }
 
