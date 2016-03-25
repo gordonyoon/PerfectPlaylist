@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         super.onCreate(savedInstanceState)
         component.inject(this)
         initializeUi()
+        nowPlayingState.register(this, trackPager)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -51,13 +52,8 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         authenticator.login(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-        nowPlayingState.register(this, trackPager)
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         nowPlayingState.unregister()
     }
 
