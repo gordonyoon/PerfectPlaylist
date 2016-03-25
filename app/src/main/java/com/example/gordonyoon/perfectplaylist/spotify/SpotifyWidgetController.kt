@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import com.example.gordonyoon.perfectplaylist.App
+import com.example.gordonyoon.perfectplaylist.rx.RxBus
 import com.example.gordonyoon.perfectplaylist.spotify.constants.BroadcastTypes
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,17 +13,21 @@ import javax.inject.Singleton
 class SpotifyWidgetController {
 
     lateinit var context: App
+    lateinit var bus: RxBus
 
     @Inject
-    constructor(context: App) {
+    constructor(context: App, bus: RxBus) {
         this.context = context
+        this.bus = bus
     }
 
     fun nextTrack() {
         context.sendBroadcast(Intent(BroadcastTypes.WIDGET_NEXT))
     }
 
-    fun prevTrack() {
+    fun prevTrack(sendEvent: Boolean = false) {
+        if (sendEvent)
+            bus.send(PreviousTrack())
         context.sendBroadcast(Intent(BroadcastTypes.WIDGET_PREV))
     }
 
@@ -41,4 +46,6 @@ class SpotifyWidgetController {
                 .find { it.process == BroadcastTypes.SPOTIFY_PACKAGE }
         return spotify != null
     }
+
+    class PreviousTrack
 }

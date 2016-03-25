@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), OnNowPlayingChangeListener, HasCompone
         trackPager.apply {
             adapter = pagerAdapter
             setOnPageChanged(
-                    onPageLeft = { widgetController.prevTrack() },
+                    onPageLeft = { widgetController.prevTrack(true) },
                     onPageRight = { widgetController.nextTrack() }
             )
         }

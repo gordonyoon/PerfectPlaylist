@@ -16,7 +16,8 @@ class NowPlayingState {
 
     private var nowPlayingChangeListener: OnNowPlayingChangeListener? = null
     private var nowPlayingExpiredListener: OnNowPlayingExpiredListener? = null
-    private var timeoutThread: TimeoutThread? = null
+    private var expireTimeout: TimeoutThread? = null
+    private var prevTrackTimeout: TimeoutThread? = null
     private var timedOut: Boolean = false
 
     var nowPlaying: NowPlayingTrack by Delegates.observable(NowPlayingTrack()) {
@@ -24,18 +25,19 @@ class NowPlayingState {
         if (!new.isEmpty()) {
             nowPlayingChangeListener?.updateUi(new.name, new.artist)
         }
-        restartTimeout(new.length)
+        restartExpireTimeout(new.length)
+        prevTrackTimeout?.interrupt()
     }
 
-    private fun restartTimeout(time: Int) {
+    private fun restartExpireTimeout(time: Int) {
         timedOut = false
         nowPlayingExpiredListener?.unexpire()
-        timeoutThread?.interrupt()
-        timeoutThread = TimeoutThread(time) {
+        expireTimeout?.interrupt()
+        expireTimeout = TimeoutThread(time) {
             timedOut = true
             nowPlayingExpiredListener?.expire()
         }
-        timeoutThread?.start()
+        expireTimeout?.start()
     }
 
     @Inject
@@ -48,8 +50,12 @@ class NowPlayingState {
                 this.nowPlaying = it
             } else if (it is NowPlayingStateChange) {
                 if (it.playing == true && !nowPlaying.isEmpty()) {
-                    restartTimeout(nowPlaying.length)
+                    restartExpireTimeout(nowPlaying.length)
                 }
+            } else if (it is SpotifyWidgetController.PreviousTrack) {
+                prevTrackTimeout?.interrupt()
+                prevTrackTimeout = TimeoutThread(500) { widgetController.prevTrack(true) }
+                prevTrackTimeout?.start()
             }
         }
     }
@@ -78,7 +84,7 @@ class NowPlayingState {
 
     class TimeoutThread(val timeout: Int, val onFinishNoInterrupt: () -> Unit): Thread() {
 
-        val STEP = 4000
+        val STEP = 500
 
         override fun run() {
             for (i in 0..timeout step STEP) {
