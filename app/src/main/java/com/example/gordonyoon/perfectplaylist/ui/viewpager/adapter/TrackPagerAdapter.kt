@@ -22,9 +22,23 @@ class TrackPagerAdapter : FragmentPagerAdapter {
         this.activity = activity
         this.fragmentManager = fragmentManager
 
+        // when the activity is recreated, the fragments are still saved in fragmentManager
+        clearFragmentManager()
+
         for (i in 1..NUM_PAGES) {
             trackFragments.add(TrackFragment())
         }
+        notifyDataSetChanged()
+    }
+
+    fun clearFragmentManager() {
+        if (fragmentManager.fragments == null) return
+
+        fragmentManager.beginTransaction().apply {
+            for (fragment in fragmentManager.fragments) {
+                remove(fragment)
+            }
+        }.commit()
     }
 
     override fun getCount(): Int = NUM_PAGES
