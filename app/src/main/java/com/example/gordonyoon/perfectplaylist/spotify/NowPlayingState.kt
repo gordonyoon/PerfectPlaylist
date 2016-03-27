@@ -54,7 +54,7 @@ class NowPlayingState {
                 }
             } else if (it is SpotifyWidgetController.PreviousTrack) {
                 prevTrackTimeout?.interrupt()
-                prevTrackTimeout = TimeoutThread(100) { widgetController.prevTrack() }
+                prevTrackTimeout = TimeoutThread(500) { widgetController.prevTrack() }
                 prevTrackTimeout?.start()
             }
         }
