@@ -11,13 +11,30 @@ import org.jetbrains.anko.find
 
 class TrackFragment(): Fragment() {
 
+    private var trackTitle: String = ""
+    private var artistName: String = ""
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_track, container, false)
+        val view = inflater?.inflate(R.layout.fragment_track, container, false)
+        if (!trackTitle.isEmpty() || !artistName.isEmpty()) {
+            updateTrack(view, trackTitle, artistName)
+            trackTitle = ""
+            artistName = ""
+        }
+        return view
     }
 
     fun updateTrack(trackTitle: String, artistName: String) {
-        view?.find<TextView>(R.id.trackTitle)?.text = trackTitle
-        view?.find<TextView>(R.id.artistName)?.text = artistName
+        if (view == null) {
+            this.trackTitle = trackTitle
+            this.artistName = artistName
+        }
+        updateTrack(view, trackTitle, artistName)
+    }
+
+    private fun updateTrack(parent: View?, trackTitle: String, artistName: String) {
+        parent?.find<TextView>(R.id.trackTitle)?.text = trackTitle
+        parent?.find<TextView>(R.id.artistName)?.text = artistName
     }
 
     fun clear() {
