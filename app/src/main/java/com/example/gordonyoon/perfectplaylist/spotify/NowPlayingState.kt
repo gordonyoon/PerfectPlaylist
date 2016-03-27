@@ -24,8 +24,8 @@ class NowPlayingState {
         prop, old, new ->
         if (!new.isEmpty()) {
             nowPlayingChangeListener?.updateUi(new.name, new.artist)
+            restartExpireTimeout(new.length)
         }
-        restartExpireTimeout(new.length)
         prevTrackTimeout?.interrupt()
     }
 
