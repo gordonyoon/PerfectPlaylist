@@ -39,7 +39,7 @@ fun SpotifyService.getNewTracks(myId: String, ppTempId: String, latestAdd: Date)
 
 fun PlaylistBase.getTracks(spotify: SpotifyService, newestAdd: Date = Date(0)): List<Track> {
     throwIfOnMainThread()
-    return spotify.getAllPlaylistTracks(owner.id, id, newestAdd).filter { it != null }
+    return spotify.getAllPlaylistTracks(owner.id, id, newestAdd)
 }
 
 fun SpotifyService.getAllPlaylistTracks(ownerId: String, playlistId: String, newestAdd: Date = Date(0)): List<Track> {
@@ -51,7 +51,7 @@ fun SpotifyService.getAllPlaylistTracks(ownerId: String, playlistId: String, new
         tracks.addAll(pager.items.filter { it.added_at.toDate().after(newestAdd) })
         offset += pager.limit
     } while (pager.next != null)
-    return tracks.map { it.track }
+    return tracks.map { it.track }.filter { it != null }
 }
 
 fun List<Track>.filterSavedTracks(spotify: SpotifyService): List<Track> {
