@@ -39,7 +39,7 @@ fun SpotifyService.getNewTracks(myId: String, ppTempId: String, latestAdd: Date)
 
 fun PlaylistBase.getTracks(spotify: SpotifyService, newestAdd: Date = Date(0)): List<Track> {
     throwIfOnMainThread()
-    return spotify.getAllPlaylistTracks(owner.id, id, newestAdd)
+    return spotify.getAllPlaylistTracks(owner.id, id, newestAdd).filter { it != null }
 }
 
 fun SpotifyService.getAllPlaylistTracks(ownerId: String, playlistId: String, newestAdd: Date = Date(0)): List<Track> {
