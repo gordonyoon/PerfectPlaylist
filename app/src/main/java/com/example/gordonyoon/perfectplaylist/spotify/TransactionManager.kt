@@ -106,11 +106,11 @@ class TransactionManager {
             val ppTempId = spotify.getPpTempId(myId)
             val ppFinalId = spotify.getPpFinalId(myId)
 
-            val uris = tracks.map { it.uri }
+            val uris = tracks.map { it.uri }.distinct()
             val ids = uris.map { it.removePrefix("spotify:track:") }
 
             spotify.addTracksToMyLibrary(ids)
-            spotify.addDistinctTracksToPlaylist(myId, ppFinalId, uris)
+            spotify.addTracksToPlaylist(myId, ppFinalId, uris)
             spotify.removeTracksFromPlaylist(myId, ppTempId, uris)
         }
     }

@@ -67,15 +67,6 @@ fun List<Track>.filterSavedTracks(spotify: SpotifyService): List<Track> {
     return newMinusSavedTracks
 }
 
-fun SpotifyService.addDistinctTracksToPlaylist(userId: String, playlistId: String, trackUris: List<String>): Unit {
-    throwIfOnMainThread()
-    if (trackUris.isEmpty()) return
-    val alreadyExist: List<String> = getAllPlaylistTracks(userId, playlistId).map { it.uri }
-    val distinctTracks: List<String> = trackUris.subtract(alreadyExist).toList()
-
-    addTracksToPlaylist(userId, playlistId, distinctTracks)
-}
-
 fun SpotifyService.addTracksToPlaylist(userId: String, playlistId: String, trackUris: List<String>): Unit {
     throwIfOnMainThread()
     if (trackUris.isEmpty()) return
